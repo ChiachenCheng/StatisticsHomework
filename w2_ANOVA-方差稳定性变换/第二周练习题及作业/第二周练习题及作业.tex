@@ -1,0 +1,978 @@
+%!TEX program = xelatex
+\documentclass[11pt]{ctexart}
+
+
+    \usepackage[breakable]{tcolorbox}
+    \usepackage{parskip} % Stop auto-indenting (to mimic markdown behaviour)
+    
+    \usepackage{iftex}
+    \ifPDFTeX
+    	\usepackage[T1]{fontenc}
+    	\usepackage{mathpazo}
+    \else
+    	\usepackage{fontspec}
+    \fi
+
+    % Basic figure setup, for now with no caption control since it's done
+    % automatically by Pandoc (which extracts ![](path) syntax from Markdown).
+    \usepackage{graphicx}
+    % Maintain compatibility with old templates. Remove in nbconvert 6.0
+    \let\Oldincludegraphics\includegraphics
+    % Ensure that by default, figures have no caption (until we provide a
+    % proper Figure object with a Caption API and a way to capture that
+    % in the conversion process - todo).
+    \usepackage{caption}
+    \DeclareCaptionFormat{nocaption}{}
+    \captionsetup{format=nocaption,aboveskip=0pt,belowskip=0pt}
+
+    \usepackage{float}
+    \floatplacement{figure}{H} % forces figures to be placed at the correct location
+    \usepackage{xcolor} % Allow colors to be defined
+    \usepackage{enumerate} % Needed for markdown enumerations to work
+    \usepackage{geometry} % Used to adjust the document margins
+    \usepackage{amsmath} % Equations
+    \usepackage{amssymb} % Equations
+    \usepackage{textcomp} % defines textquotesingle
+    % Hack from http://tex.stackexchange.com/a/47451/13684:
+    \AtBeginDocument{%
+        \def\PYZsq{\textquotesingle}% Upright quotes in Pygmentized code
+    }
+    \usepackage{upquote} % Upright quotes for verbatim code
+    \usepackage{eurosym} % defines \euro
+    \usepackage[mathletters]{ucs} % Extended unicode (utf-8) support
+    \usepackage{fancyvrb} % verbatim replacement that allows latex
+    \usepackage{grffile} % extends the file name processing of package graphics 
+                         % to support a larger range
+    \makeatletter % fix for old versions of grffile with XeLaTeX
+    \@ifpackagelater{grffile}{2019/11/01}
+    {
+      % Do nothing on new versions
+    }
+    {
+      \def\Gread@@xetex#1{%
+        \IfFileExists{"\Gin@base".bb}%
+        {\Gread@eps{\Gin@base.bb}}%
+        {\Gread@@xetex@aux#1}%
+      }
+    }
+    \makeatother
+    \usepackage[Export]{adjustbox} % Used to constrain images to a maximum size
+    \adjustboxset{max size={0.9\linewidth}{0.9\paperheight}}
+
+    % The hyperref package gives us a pdf with properly built
+    % internal navigation ('pdf bookmarks' for the table of contents,
+    % internal cross-reference links, web links for URLs, etc.)
+    \usepackage{hyperref}
+    % The default LaTeX title has an obnoxious amount of whitespace. By default,
+    % titling removes some of it. It also provides customization options.
+    \usepackage{titling}
+    \usepackage{longtable} % longtable support required by pandoc >1.10
+    \usepackage{booktabs}  % table support for pandoc > 1.12.2
+    \usepackage[inline]{enumitem} % IRkernel/repr support (it uses the enumerate* environment)
+    \usepackage[normalem]{ulem} % ulem is needed to support strikethroughs (\sout)
+                                % normalem makes italics be italics, not underlines
+    \usepackage{mathrsfs}
+    
+
+    
+    % Colors for the hyperref package
+    \definecolor{urlcolor}{rgb}{0,.145,.698}
+    \definecolor{linkcolor}{rgb}{.71,0.21,0.01}
+    \definecolor{citecolor}{rgb}{.12,.54,.11}
+
+    % ANSI colors
+    \definecolor{ansi-black}{HTML}{3E424D}
+    \definecolor{ansi-black-intense}{HTML}{282C36}
+    \definecolor{ansi-red}{HTML}{E75C58}
+    \definecolor{ansi-red-intense}{HTML}{B22B31}
+    \definecolor{ansi-green}{HTML}{00A250}
+    \definecolor{ansi-green-intense}{HTML}{007427}
+    \definecolor{ansi-yellow}{HTML}{DDB62B}
+    \definecolor{ansi-yellow-intense}{HTML}{B27D12}
+    \definecolor{ansi-blue}{HTML}{208FFB}
+    \definecolor{ansi-blue-intense}{HTML}{0065CA}
+    \definecolor{ansi-magenta}{HTML}{D160C4}
+    \definecolor{ansi-magenta-intense}{HTML}{A03196}
+    \definecolor{ansi-cyan}{HTML}{60C6C8}
+    \definecolor{ansi-cyan-intense}{HTML}{258F8F}
+    \definecolor{ansi-white}{HTML}{C5C1B4}
+    \definecolor{ansi-white-intense}{HTML}{A1A6B2}
+    \definecolor{ansi-default-inverse-fg}{HTML}{FFFFFF}
+    \definecolor{ansi-default-inverse-bg}{HTML}{000000}
+
+    % common color for the border for error outputs.
+    \definecolor{outerrorbackground}{HTML}{FFDFDF}
+
+    % commands and environments needed by pandoc snippets
+    % extracted from the output of `pandoc -s`
+    \providecommand{\tightlist}{%
+      \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+    \DefineVerbatimEnvironment{Highlighting}{Verbatim}{commandchars=\\\{\}}
+    % Add ',fontsize=\small' for more characters per line
+    \newenvironment{Shaded}{}{}
+    \newcommand{\KeywordTok}[1]{\textcolor[rgb]{0.00,0.44,0.13}{\textbf{{#1}}}}
+    \newcommand{\DataTypeTok}[1]{\textcolor[rgb]{0.56,0.13,0.00}{{#1}}}
+    \newcommand{\DecValTok}[1]{\textcolor[rgb]{0.25,0.63,0.44}{{#1}}}
+    \newcommand{\BaseNTok}[1]{\textcolor[rgb]{0.25,0.63,0.44}{{#1}}}
+    \newcommand{\FloatTok}[1]{\textcolor[rgb]{0.25,0.63,0.44}{{#1}}}
+    \newcommand{\CharTok}[1]{\textcolor[rgb]{0.25,0.44,0.63}{{#1}}}
+    \newcommand{\StringTok}[1]{\textcolor[rgb]{0.25,0.44,0.63}{{#1}}}
+    \newcommand{\CommentTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textit{{#1}}}}
+    \newcommand{\OtherTok}[1]{\textcolor[rgb]{0.00,0.44,0.13}{{#1}}}
+    \newcommand{\AlertTok}[1]{\textcolor[rgb]{1.00,0.00,0.00}{\textbf{{#1}}}}
+    \newcommand{\FunctionTok}[1]{\textcolor[rgb]{0.02,0.16,0.49}{{#1}}}
+    \newcommand{\RegionMarkerTok}[1]{{#1}}
+    \newcommand{\ErrorTok}[1]{\textcolor[rgb]{1.00,0.00,0.00}{\textbf{{#1}}}}
+    \newcommand{\NormalTok}[1]{{#1}}
+    
+    % Additional commands for more recent versions of Pandoc
+    \newcommand{\ConstantTok}[1]{\textcolor[rgb]{0.53,0.00,0.00}{{#1}}}
+    \newcommand{\SpecialCharTok}[1]{\textcolor[rgb]{0.25,0.44,0.63}{{#1}}}
+    \newcommand{\VerbatimStringTok}[1]{\textcolor[rgb]{0.25,0.44,0.63}{{#1}}}
+    \newcommand{\SpecialStringTok}[1]{\textcolor[rgb]{0.73,0.40,0.53}{{#1}}}
+    \newcommand{\ImportTok}[1]{{#1}}
+    \newcommand{\DocumentationTok}[1]{\textcolor[rgb]{0.73,0.13,0.13}{\textit{{#1}}}}
+    \newcommand{\AnnotationTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textbf{\textit{{#1}}}}}
+    \newcommand{\CommentVarTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textbf{\textit{{#1}}}}}
+    \newcommand{\VariableTok}[1]{\textcolor[rgb]{0.10,0.09,0.49}{{#1}}}
+    \newcommand{\ControlFlowTok}[1]{\textcolor[rgb]{0.00,0.44,0.13}{\textbf{{#1}}}}
+    \newcommand{\OperatorTok}[1]{\textcolor[rgb]{0.40,0.40,0.40}{{#1}}}
+    \newcommand{\BuiltInTok}[1]{{#1}}
+    \newcommand{\ExtensionTok}[1]{{#1}}
+    \newcommand{\PreprocessorTok}[1]{\textcolor[rgb]{0.74,0.48,0.00}{{#1}}}
+    \newcommand{\AttributeTok}[1]{\textcolor[rgb]{0.49,0.56,0.16}{{#1}}}
+    \newcommand{\InformationTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textbf{\textit{{#1}}}}}
+    \newcommand{\WarningTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textbf{\textit{{#1}}}}}
+    
+    
+    % Define a nice break command that doesn't care if a line doesn't already
+    % exist.
+    \def\br{\hspace*{\fill} \\* }
+    % Math Jax compatibility definitions
+    \def\gt{>}
+    \def\lt{<}
+    \let\Oldtex\TeX
+    \let\Oldlatex\LaTeX
+    \renewcommand{\TeX}{\textrm{\Oldtex}}
+    \renewcommand{\LaTeX}{\textrm{\Oldlatex}}
+    % Document parameters
+    % Document title
+    \title{第二周练习题及作业}
+    
+    
+    
+    
+    
+% Pygments definitions
+\makeatletter
+\def\PY@reset{\let\PY@it=\relax \let\PY@bf=\relax%
+    \let\PY@ul=\relax \let\PY@tc=\relax%
+    \let\PY@bc=\relax \let\PY@ff=\relax}
+\def\PY@tok#1{\csname PY@tok@#1\endcsname}
+\def\PY@toks#1+{\ifx\relax#1\empty\else%
+    \PY@tok{#1}\expandafter\PY@toks\fi}
+\def\PY@do#1{\PY@bc{\PY@tc{\PY@ul{%
+    \PY@it{\PY@bf{\PY@ff{#1}}}}}}}
+\def\PY#1#2{\PY@reset\PY@toks#1+\relax+\PY@do{#2}}
+
+\expandafter\def\csname PY@tok@w\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.73,0.73,0.73}{##1}}}
+\expandafter\def\csname PY@tok@c\endcsname{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.25,0.50,0.50}{##1}}}
+\expandafter\def\csname PY@tok@cp\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.74,0.48,0.00}{##1}}}
+\expandafter\def\csname PY@tok@k\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\expandafter\def\csname PY@tok@kp\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\expandafter\def\csname PY@tok@kt\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.69,0.00,0.25}{##1}}}
+\expandafter\def\csname PY@tok@o\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\expandafter\def\csname PY@tok@ow\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.67,0.13,1.00}{##1}}}
+\expandafter\def\csname PY@tok@nb\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\expandafter\def\csname PY@tok@nf\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.00,0.00,1.00}{##1}}}
+\expandafter\def\csname PY@tok@nc\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.00,1.00}{##1}}}
+\expandafter\def\csname PY@tok@nn\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.00,1.00}{##1}}}
+\expandafter\def\csname PY@tok@ne\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.82,0.25,0.23}{##1}}}
+\expandafter\def\csname PY@tok@nv\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.10,0.09,0.49}{##1}}}
+\expandafter\def\csname PY@tok@no\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.53,0.00,0.00}{##1}}}
+\expandafter\def\csname PY@tok@nl\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.63,0.63,0.00}{##1}}}
+\expandafter\def\csname PY@tok@ni\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.60,0.60,0.60}{##1}}}
+\expandafter\def\csname PY@tok@na\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.49,0.56,0.16}{##1}}}
+\expandafter\def\csname PY@tok@nt\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\expandafter\def\csname PY@tok@nd\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.67,0.13,1.00}{##1}}}
+\expandafter\def\csname PY@tok@s\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\expandafter\def\csname PY@tok@sd\endcsname{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\expandafter\def\csname PY@tok@si\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.73,0.40,0.53}{##1}}}
+\expandafter\def\csname PY@tok@se\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.73,0.40,0.13}{##1}}}
+\expandafter\def\csname PY@tok@sr\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.73,0.40,0.53}{##1}}}
+\expandafter\def\csname PY@tok@ss\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.10,0.09,0.49}{##1}}}
+\expandafter\def\csname PY@tok@sx\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\expandafter\def\csname PY@tok@m\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\expandafter\def\csname PY@tok@gh\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.00,0.50}{##1}}}
+\expandafter\def\csname PY@tok@gu\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.50,0.00,0.50}{##1}}}
+\expandafter\def\csname PY@tok@gd\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.63,0.00,0.00}{##1}}}
+\expandafter\def\csname PY@tok@gi\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.00,0.63,0.00}{##1}}}
+\expandafter\def\csname PY@tok@gr\endcsname{\def\PY@tc##1{\textcolor[rgb]{1.00,0.00,0.00}{##1}}}
+\expandafter\def\csname PY@tok@ge\endcsname{\let\PY@it=\textit}
+\expandafter\def\csname PY@tok@gs\endcsname{\let\PY@bf=\textbf}
+\expandafter\def\csname PY@tok@gp\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.00,0.50}{##1}}}
+\expandafter\def\csname PY@tok@go\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.53,0.53,0.53}{##1}}}
+\expandafter\def\csname PY@tok@gt\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.00,0.27,0.87}{##1}}}
+\expandafter\def\csname PY@tok@err\endcsname{\def\PY@bc##1{\setlength{\fboxsep}{0pt}\fcolorbox[rgb]{1.00,0.00,0.00}{1,1,1}{\strut ##1}}}
+\expandafter\def\csname PY@tok@kc\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\expandafter\def\csname PY@tok@kd\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\expandafter\def\csname PY@tok@kn\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\expandafter\def\csname PY@tok@kr\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\expandafter\def\csname PY@tok@bp\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\expandafter\def\csname PY@tok@fm\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.00,0.00,1.00}{##1}}}
+\expandafter\def\csname PY@tok@vc\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.10,0.09,0.49}{##1}}}
+\expandafter\def\csname PY@tok@vg\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.10,0.09,0.49}{##1}}}
+\expandafter\def\csname PY@tok@vi\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.10,0.09,0.49}{##1}}}
+\expandafter\def\csname PY@tok@vm\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.10,0.09,0.49}{##1}}}
+\expandafter\def\csname PY@tok@sa\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\expandafter\def\csname PY@tok@sb\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\expandafter\def\csname PY@tok@sc\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\expandafter\def\csname PY@tok@dl\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\expandafter\def\csname PY@tok@s2\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\expandafter\def\csname PY@tok@sh\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\expandafter\def\csname PY@tok@s1\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\expandafter\def\csname PY@tok@mb\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\expandafter\def\csname PY@tok@mf\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\expandafter\def\csname PY@tok@mh\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\expandafter\def\csname PY@tok@mi\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\expandafter\def\csname PY@tok@il\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\expandafter\def\csname PY@tok@mo\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\expandafter\def\csname PY@tok@ch\endcsname{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.25,0.50,0.50}{##1}}}
+\expandafter\def\csname PY@tok@cm\endcsname{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.25,0.50,0.50}{##1}}}
+\expandafter\def\csname PY@tok@cpf\endcsname{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.25,0.50,0.50}{##1}}}
+\expandafter\def\csname PY@tok@c1\endcsname{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.25,0.50,0.50}{##1}}}
+\expandafter\def\csname PY@tok@cs\endcsname{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.25,0.50,0.50}{##1}}}
+
+\def\PYZbs{\char`\\}
+\def\PYZus{\char`\_}
+\def\PYZob{\char`\{}
+\def\PYZcb{\char`\}}
+\def\PYZca{\char`\^}
+\def\PYZam{\char`\&}
+\def\PYZlt{\char`\<}
+\def\PYZgt{\char`\>}
+\def\PYZsh{\char`\#}
+\def\PYZpc{\char`\%}
+\def\PYZdl{\char`\$}
+\def\PYZhy{\char`\-}
+\def\PYZsq{\char`\'}
+\def\PYZdq{\char`\"}
+\def\PYZti{\char`\~}
+% for compatibility with earlier versions
+\def\PYZat{@}
+\def\PYZlb{[}
+\def\PYZrb{]}
+\makeatother
+
+
+    % For linebreaks inside Verbatim environment from package fancyvrb. 
+    \makeatletter
+        \newbox\Wrappedcontinuationbox 
+        \newbox\Wrappedvisiblespacebox 
+        \newcommand*\Wrappedvisiblespace {\textcolor{red}{\textvisiblespace}} 
+        \newcommand*\Wrappedcontinuationsymbol {\textcolor{red}{\llap{\tiny$\m@th\hookrightarrow$}}} 
+        \newcommand*\Wrappedcontinuationindent {3ex } 
+        \newcommand*\Wrappedafterbreak {\kern\Wrappedcontinuationindent\copy\Wrappedcontinuationbox} 
+        % Take advantage of the already applied Pygments mark-up to insert 
+        % potential linebreaks for TeX processing. 
+        %        {, <, #, %, $, ' and ": go to next line. 
+        %        _, }, ^, &, >, - and ~: stay at end of broken line. 
+        % Use of \textquotesingle for straight quote. 
+        \newcommand*\Wrappedbreaksatspecials {% 
+            \def\PYGZus{\discretionary{\char`\_}{\Wrappedafterbreak}{\char`\_}}% 
+            \def\PYGZob{\discretionary{}{\Wrappedafterbreak\char`\{}{\char`\{}}% 
+            \def\PYGZcb{\discretionary{\char`\}}{\Wrappedafterbreak}{\char`\}}}% 
+            \def\PYGZca{\discretionary{\char`\^}{\Wrappedafterbreak}{\char`\^}}% 
+            \def\PYGZam{\discretionary{\char`\&}{\Wrappedafterbreak}{\char`\&}}% 
+            \def\PYGZlt{\discretionary{}{\Wrappedafterbreak\char`\<}{\char`\<}}% 
+            \def\PYGZgt{\discretionary{\char`\>}{\Wrappedafterbreak}{\char`\>}}% 
+            \def\PYGZsh{\discretionary{}{\Wrappedafterbreak\char`\#}{\char`\#}}% 
+            \def\PYGZpc{\discretionary{}{\Wrappedafterbreak\char`\%}{\char`\%}}% 
+            \def\PYGZdl{\discretionary{}{\Wrappedafterbreak\char`\$}{\char`\$}}% 
+            \def\PYGZhy{\discretionary{\char`\-}{\Wrappedafterbreak}{\char`\-}}% 
+            \def\PYGZsq{\discretionary{}{\Wrappedafterbreak\textquotesingle}{\textquotesingle}}% 
+            \def\PYGZdq{\discretionary{}{\Wrappedafterbreak\char`\"}{\char`\"}}% 
+            \def\PYGZti{\discretionary{\char`\~}{\Wrappedafterbreak}{\char`\~}}% 
+        } 
+        % Some characters . , ; ? ! / are not pygmentized. 
+        % This macro makes them "active" and they will insert potential linebreaks 
+        \newcommand*\Wrappedbreaksatpunct {% 
+            \lccode`\~`\.\lowercase{\def~}{\discretionary{\hbox{\char`\.}}{\Wrappedafterbreak}{\hbox{\char`\.}}}% 
+            \lccode`\~`\,\lowercase{\def~}{\discretionary{\hbox{\char`\,}}{\Wrappedafterbreak}{\hbox{\char`\,}}}% 
+            \lccode`\~`\;\lowercase{\def~}{\discretionary{\hbox{\char`\;}}{\Wrappedafterbreak}{\hbox{\char`\;}}}% 
+            \lccode`\~`\:\lowercase{\def~}{\discretionary{\hbox{\char`\:}}{\Wrappedafterbreak}{\hbox{\char`\:}}}% 
+            \lccode`\~`\?\lowercase{\def~}{\discretionary{\hbox{\char`\?}}{\Wrappedafterbreak}{\hbox{\char`\?}}}% 
+            \lccode`\~`\!\lowercase{\def~}{\discretionary{\hbox{\char`\!}}{\Wrappedafterbreak}{\hbox{\char`\!}}}% 
+            \lccode`\~`\/\lowercase{\def~}{\discretionary{\hbox{\char`\/}}{\Wrappedafterbreak}{\hbox{\char`\/}}}% 
+            \catcode`\.\active
+            \catcode`\,\active 
+            \catcode`\;\active
+            \catcode`\:\active
+            \catcode`\?\active
+            \catcode`\!\active
+            \catcode`\/\active 
+            \lccode`\~`\~ 	
+        }
+    \makeatother
+
+    \let\OriginalVerbatim=\Verbatim
+    \makeatletter
+    \renewcommand{\Verbatim}[1][1]{%
+        %\parskip\z@skip
+        \sbox\Wrappedcontinuationbox {\Wrappedcontinuationsymbol}%
+        \sbox\Wrappedvisiblespacebox {\FV@SetupFont\Wrappedvisiblespace}%
+        \def\FancyVerbFormatLine ##1{\hsize\linewidth
+            \vtop{\raggedright\hyphenpenalty\z@\exhyphenpenalty\z@
+                \doublehyphendemerits\z@\finalhyphendemerits\z@
+                \strut ##1\strut}%
+        }%
+        % If the linebreak is at a space, the latter will be displayed as visible
+        % space at end of first line, and a continuation symbol starts next line.
+        % Stretch/shrink are however usually zero for typewriter font.
+        \def\FV@Space {%
+            \nobreak\hskip\z@ plus\fontdimen3\font minus\fontdimen4\font
+            \discretionary{\copy\Wrappedvisiblespacebox}{\Wrappedafterbreak}
+            {\kern\fontdimen2\font}%
+        }%
+        
+        % Allow breaks at special characters using \PYG... macros.
+        \Wrappedbreaksatspecials
+        % Breaks at punctuation characters . , ; ? ! and / need catcode=\active 	
+        \OriginalVerbatim[#1,codes*=\Wrappedbreaksatpunct]%
+    }
+    \makeatother
+
+    % Exact colors from NB
+    \definecolor{incolor}{HTML}{303F9F}
+    \definecolor{outcolor}{HTML}{D84315}
+    \definecolor{cellborder}{HTML}{CFCFCF}
+    \definecolor{cellbackground}{HTML}{F7F7F7}
+    
+    % prompt
+    \makeatletter
+    \newcommand{\boxspacing}{\kern\kvtcb@left@rule\kern\kvtcb@boxsep}
+    \makeatother
+    \newcommand{\prompt}[4]{
+        {\ttfamily\llap{{\color{#2}[#3]:\hspace{3pt}#4}}\vspace{-\baselineskip}}
+    }
+    
+
+    
+    % Prevent overflowing lines due to hard-to-break entities
+    \sloppy 
+    % Setup hyperref package
+    \hypersetup{
+      breaklinks=true,  % so long urls are correctly broken across lines
+      colorlinks=true,
+      urlcolor=urlcolor,
+      linkcolor=linkcolor,
+      citecolor=citecolor,
+      }
+    % Slightly bigger margins than the latex defaults
+    
+    \geometry{verbose,tmargin=1in,bmargin=1in,lmargin=1in,rmargin=1in}
+    
+    
+
+\begin{document}
+    
+    \maketitle
+    
+    
+
+    
+    \hypertarget{week2-one-way-anova-ux65b9ux5deeux7a33ux5b9aux5316ux53d8ux6362}{%
+\section{Week2 One-way
+ANOVA-方差稳定化变换}\label{week2-one-way-anova-ux65b9ux5deeux7a33ux5b9aux5316ux53d8ux6362}}
+
+\hypertarget{ux80ccux666fux63cfux8ff0}{%
+\subsection{背景描述}\label{ux80ccux666fux63cfux8ff0}}
+
+这里对五种绝缘材料的性能进行实验研究。我们在升高电压的情况下对每种材料的四个样本进行测试，以加速失效时间。
+这是一个因子水平数 a = 5 和重复次数 n = 4 的单因子实验。
+
+\hypertarget{ux6570ux636eux63cfux8ff0}{%
+\subsection{数据描述}\label{ux6570ux636eux63cfux8ff0}}
+
+\begin{longtable}[]{@{}cccc@{}}
+\toprule
+变量名 & 变量含义 & 变量类型 & 变量取值范围 \\
+\midrule
+\endhead
+（自变量）Material & 绝缘材料类型 & categorical variable & {[}1, 2, 3,
+4, 5{]} \\
+（因变量）Failure Time & 失效时间 & continuous variable（单位：分钟） &
+Real \\
+\bottomrule
+\end{longtable}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{1}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{k+kn}{import} \PY{n+nn}{pandas} \PY{k}{as} \PY{n+nn}{pd}
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Data: }\PY{l+s+se}{\PYZbs{}n}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{pd}\PY{o}{.}\PY{n}{read\PYZus{}csv}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Project2.csv}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}\PY{o}{.}\PY{n}{values}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+Data:
+ [[    1     1   110]
+ [    2     1   157]
+ [    3     1   194]
+ [    4     1   178]
+ [    5     2     1]
+ [    6     2     2]
+ [    7     2     4]
+ [    8     2    18]
+ [    9     3   880]
+ [   10     3  1256]
+ [   11     3  5276]
+ [   12     3  4355]
+ [   13     4   495]
+ [   14     4  7040]
+ [   15     4  5307]
+ [   16     4 10050]
+ [   17     5     7]
+ [   18     5     5]
+ [   19     5    29]
+ [   20     5     2]]
+    \end{Verbatim}
+
+    \hypertarget{ux95eeux9898}{%
+\subsection{问题}\label{ux95eeux9898}}
+
+注：这里使用 \(\alpha\)=0.05 的显著性水平
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\tightlist
+\item
+  试判断 5 种绝缘材料的性能是否存在差异.
+\item
+  试判断该实验残差是否具有异方差性.
+\item
+  若实验中的残差具有异方差性，试判断失效时间如何进行方差稳定化变换.
+\item
+  如果需要变换，基于变换后的数据，试判断 5 种绝缘材料的性能是否存在差异.
+\end{enumerate}
+
+\hypertarget{ux89e3ux51b3ux65b9ux6848}{%
+\subsection{解决方案}\label{ux89e3ux51b3ux65b9ux6848}}
+
+\textbf{Q1:}\\
+检验假设 \(H_0: \mu_1 = \mu_2 = \mu_3 = \mu_4\) ;
+\(H_1: \mu_1, \mu_2, \mu_3, \mu_4\)不全相等。
+
+在本问题中，采用单因子方差分析模型（One-way
+ANOVA模型）对问题进行分析。计算得出方差分析表，然后计算出检验统计量F。若\(F\ge F_{1-\alpha}(f_A,f_e)\)，说明\(H_0\)成立，因子不显著；否则说明\(H_0\)不成立，说明因子显著。其中\(f_A,f_e\)分别为因子和误差的自由度。
+
+利用python进行分析得到的具体分析结果如下：
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{2}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{c+c1}{\PYZsh{} Import standard packages}
+\PY{k+kn}{import} \PY{n+nn}{numpy} \PY{k}{as} \PY{n+nn}{np}
+\PY{k+kn}{import} \PY{n+nn}{pandas} \PY{k}{as} \PY{n+nn}{pd}
+\PY{k+kn}{import} \PY{n+nn}{scipy}\PY{n+nn}{.}\PY{n+nn}{stats} \PY{k}{as} \PY{n+nn}{stats}
+\PY{k+kn}{from} \PY{n+nn}{scipy} \PY{k+kn}{import} \PY{n}{special}
+\PY{k+kn}{import} \PY{n+nn}{matplotlib}\PY{n+nn}{.}\PY{n+nn}{pyplot} \PY{k}{as} \PY{n+nn}{plt}
+\PY{k+kn}{import} \PY{n+nn}{math}
+
+\PY{c+c1}{\PYZsh{} Import additional packages}
+\PY{k+kn}{from} \PY{n+nn}{statsmodels}\PY{n+nn}{.}\PY{n+nn}{formula}\PY{n+nn}{.}\PY{n+nn}{api} \PY{k+kn}{import} \PY{n}{ols}
+\PY{k+kn}{from} \PY{n+nn}{statsmodels}\PY{n+nn}{.}\PY{n+nn}{stats}\PY{n+nn}{.}\PY{n+nn}{anova} \PY{k+kn}{import} \PY{n}{anova\PYZus{}lm}
+\PY{k+kn}{from} \PY{n+nn}{scipy}\PY{n+nn}{.}\PY{n+nn}{stats} \PY{k+kn}{import} \PY{n}{f}
+
+\PY{n}{alpha} \PY{o}{=} \PY{l+m+mf}{0.05}
+\PY{n}{a} \PY{o}{=} \PY{l+m+mi}{5}
+\PY{n}{n} \PY{o}{=} \PY{l+m+mi}{4}
+
+\PY{n}{x} \PY{o}{=} \PY{n}{pd}\PY{o}{.}\PY{n}{read\PYZus{}csv}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Project2.csv}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\PY{n}{data} \PY{o}{=} \PY{n}{x}\PY{o}{.}\PY{n}{values}\PY{p}{[}\PY{p}{:}\PY{p}{,}\PY{l+m+mi}{1}\PY{p}{:}\PY{l+m+mi}{3}\PY{p}{]}
+\PY{n}{data} \PY{o}{=} \PY{n}{data}\PY{o}{.}\PY{n}{astype}\PY{p}{(}\PY{n+nb}{float}\PY{p}{)} 
+\PY{c+c1}{\PYZsh{} 不加此句，在进行变换时会取整，导致误差}
+\PY{c+c1}{\PYZsh{} print(data)}
+
+\PY{c+c1}{\PYZsh{} Sort them into groups, according to column 1(\PYZdq{}Material\PYZdq{})}
+\PY{n}{group1} \PY{o}{=} \PY{n}{data}\PY{p}{[}\PY{n}{data}\PY{p}{[}\PY{p}{:}\PY{p}{,}\PY{l+m+mi}{0}\PY{p}{]} \PY{o}{==} \PY{l+m+mi}{1}\PY{p}{,}\PY{l+m+mi}{1}\PY{p}{]}
+\PY{n}{group2} \PY{o}{=} \PY{n}{data}\PY{p}{[}\PY{n}{data}\PY{p}{[}\PY{p}{:}\PY{p}{,}\PY{l+m+mi}{0}\PY{p}{]} \PY{o}{==} \PY{l+m+mi}{2}\PY{p}{,}\PY{l+m+mi}{1}\PY{p}{]}
+\PY{n}{group3} \PY{o}{=} \PY{n}{data}\PY{p}{[}\PY{n}{data}\PY{p}{[}\PY{p}{:}\PY{p}{,}\PY{l+m+mi}{0}\PY{p}{]} \PY{o}{==} \PY{l+m+mi}{3}\PY{p}{,}\PY{l+m+mi}{1}\PY{p}{]}
+\PY{n}{group4} \PY{o}{=} \PY{n}{data}\PY{p}{[}\PY{n}{data}\PY{p}{[}\PY{p}{:}\PY{p}{,}\PY{l+m+mi}{0}\PY{p}{]} \PY{o}{==} \PY{l+m+mi}{4}\PY{p}{,}\PY{l+m+mi}{1}\PY{p}{]}
+\PY{n}{group5} \PY{o}{=} \PY{n}{data}\PY{p}{[}\PY{n}{data}\PY{p}{[}\PY{p}{:}\PY{p}{,}\PY{l+m+mi}{0}\PY{p}{]} \PY{o}{==} \PY{l+m+mi}{5}\PY{p}{,}\PY{l+m+mi}{1}\PY{p}{]}
+
+\PY{c+c1}{\PYZsh{} Do the one\PYZhy{}way ANOVA}
+\PY{n}{df} \PY{o}{=} \PY{n}{pd}\PY{o}{.}\PY{n}{DataFrame}\PY{p}{(}\PY{n}{data}\PY{p}{,} \PY{n}{columns} \PY{o}{=} \PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Material}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Failure\PYZus{}Time}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{p}{)}   
+\PY{n}{model} \PY{o}{=} \PY{n}{ols}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Failure\PYZus{}Time \PYZti{} C(Material)}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{df}\PY{p}{)}\PY{o}{.}\PY{n}{fit}\PY{p}{(}\PY{p}{)}
+\PY{n}{anovaResults} \PY{o}{=} \PY{n+nb}{round}\PY{p}{(}\PY{n}{anova\PYZus{}lm}\PY{p}{(}\PY{n}{model}\PY{p}{)}\PY{p}{,} \PY{l+m+mi}{4}\PY{p}{)}
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{The ANOVA table: }\PY{l+s+se}{\PYZbs{}n}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{anovaResults}\PY{p}{)}
+
+\PY{n}{F0}\PY{p}{,} \PY{n}{pVal1} \PY{o}{=} \PY{n}{stats}\PY{o}{.}\PY{n}{f\PYZus{}oneway}\PY{p}{(}\PY{n}{group1}\PY{p}{,} \PY{n}{group2}\PY{p}{,} \PY{n}{group3}\PY{p}{,} \PY{n}{group4}\PY{p}{,} \PY{n}{group5}\PY{p}{)}
+\PY{c+c1}{\PYZsh{} 法1：}
+\PY{c+c1}{\PYZsh{} print(pVal1)}
+\PY{k}{if} \PY{n}{pVal1} \PY{o}{\PYZlt{}} \PY{n}{alpha}\PY{p}{:}
+    \PY{n+nb}{print}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+se}{\PYZbs{}n}\PY{l+s+s1}{Since p\PYZhy{}value \PYZlt{} }\PY{l+s+s1}{\PYZsq{}}\PY{o}{+}\PY{n+nb}{str}\PY{p}{(}\PY{n}{alpha}\PY{p}{)}\PY{o}{+}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{, reject H0.}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+\PY{k}{else}\PY{p}{:}
+    \PY{n+nb}{print}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+se}{\PYZbs{}n}\PY{l+s+s1}{Accept H0.}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)} 
+    
+\PY{c+c1}{\PYZsh{} 法2：}
+\PY{n}{F} \PY{o}{=} \PY{n+nb}{round}\PY{p}{(}\PY{n}{f}\PY{o}{.}\PY{n}{ppf}\PY{p}{(}\PY{l+m+mf}{0.95}\PY{p}{,}\PY{n}{dfn} \PY{o}{=} \PY{n}{a}\PY{o}{\PYZhy{}}\PY{l+m+mi}{1}\PY{p}{,}\PY{n}{dfd} \PY{o}{=} \PY{n}{a}\PY{o}{*}\PY{n}{n}\PY{o}{\PYZhy{}}\PY{n}{a}\PY{p}{)}\PY{p}{,} \PY{l+m+mi}{4}\PY{p}{)}
+\PY{k}{if} \PY{n}{F0} \PY{o}{\PYZgt{}} \PY{n}{F}\PY{p}{:}
+    \PY{n+nb}{print}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Since F0 \PYZgt{} F(}\PY{l+s+s1}{\PYZsq{}}\PY{o}{+}\PY{n+nb}{str}\PY{p}{(}\PY{l+m+mi}{1}\PY{o}{\PYZhy{}}\PY{n}{alpha}\PY{p}{)}\PY{o}{+}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{, }\PY{l+s+s1}{\PYZsq{}}\PY{o}{+}\PY{n+nb}{str}\PY{p}{(}\PY{n}{a}\PY{o}{\PYZhy{}}\PY{l+m+mi}{1}\PY{p}{)}\PY{o}{+}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{, }\PY{l+s+s1}{\PYZsq{}}\PY{o}{+}\PY{n+nb}{str}\PY{p}{(}\PY{n}{a}\PY{o}{*}\PY{n}{n}\PY{o}{\PYZhy{}}\PY{n}{a}\PY{p}{)}\PY{o}{+}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{) = }\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{F}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{, reject H0.}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+\PY{k}{else}\PY{p}{:}
+    \PY{n+nb}{print}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Accept H0.}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)} 
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+The ANOVA table:
+                df       sum\_sq     mean\_sq       F  PR(>F)
+C(Material)   4.0  103191489.2  25797872.3  6.1909  0.0038
+Residual     15.0   62505657.0   4167043.8     NaN     NaN
+
+Since p-value < 0.05, reject H0.
+Since F0 > F(0.95, 4, 15) =  3.0556 , reject H0.
+    \end{Verbatim}
+
+    由方差分析表可知，P值小于 0.05 且F值大于
+3.06，落入拒绝域\(W=\{F\ge F_{1-\alpha}(f_A,f_e)\}\)中，故拒绝原假设\(H_0\)，说明因子显著，即
+5 种绝缘材料的性能存在差异。
+
+    \textbf{Q2:}\\
+ANOVA模型： \(y_{ij} = \mu + \tau_i + \epsilon_{ij}\)
+的误差服从正态独立分布，其均值为零，方差为未知的常数\(\sigma^2\)。
+想要判断ANOVA模型是否恰当，可以利用残差检测来进行分析。\\
+处理 \(i\) 的观测值 \(j\)
+的残差定义为：\(e_{ij} = y_{ij} - \hat{y}_{ij}\)\\
+其中\(\hat{y}_{ij}\)是对应于\(y_{ij}\)的一个估计，
+\(\hat{y}_{ij} = \hat{\mu} + \hat{\tau}_i = \overline{y}_{··} + (\overline{y}_{i·} - \overline{y}_{··}) = \overline{y}_{i·}\)
+
+    对数据的方差齐性进行检验，不满足方差齐性即说明数据具有异方差性，需要对原始数据进行变换然后再进行方差分析，方差齐性的检验假设为：\(H_0:\sigma_1^2 = \sigma_2^2 = ⋯ = \sigma_a^2\)
+vs \(H_1:\sigma_i^2 \neq \sigma_j^2, ∃ i \neq j.\)\\
+编写python程序来判断数据的异方差性，判断依据主要有：残差与拟合值的关系图，Bartlett检验及Levene检验。
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{3}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{c+c1}{\PYZsh{} 计算峰值流量的残差}
+\PY{n}{data\PYZus{}res} \PY{o}{=} \PY{n}{data}\PY{o}{.}\PY{n}{astype}\PY{p}{(}\PY{n+nb}{float}\PY{p}{)} \PY{o}{*} \PY{l+m+mi}{1}
+\PY{k}{for} \PY{n}{k} \PY{o+ow}{in} \PY{n+nb}{range}\PY{p}{(}\PY{n}{a}\PY{p}{)}\PY{p}{:}
+    \PY{n}{cnt} \PY{o}{=} \PY{n}{data\PYZus{}res}\PY{p}{[}\PY{n}{data\PYZus{}res}\PY{p}{[}\PY{p}{:}\PY{p}{,}\PY{l+m+mi}{0}\PY{p}{]} \PY{o}{==} \PY{n}{k} \PY{o}{+} \PY{l+m+mi}{1}\PY{p}{,}\PY{l+m+mi}{1}\PY{p}{]}
+    \PY{n}{data\PYZus{}res}\PY{p}{[}\PY{n}{data\PYZus{}res}\PY{p}{[}\PY{p}{:}\PY{p}{,}\PY{l+m+mi}{0}\PY{p}{]} \PY{o}{==} \PY{n}{k} \PY{o}{+} \PY{l+m+mi}{1}\PY{p}{,}\PY{l+m+mi}{1}\PY{p}{]} \PY{o}{=} \PY{n}{cnt} \PY{o}{\PYZhy{}} \PY{n}{np}\PY{o}{.}\PY{n}{mean}\PY{p}{(}\PY{n}{cnt}\PY{p}{)}
+\PY{c+c1}{\PYZsh{} print(data\PYZus{}res)}
+
+\PY{c+c1}{\PYZsh{} 法1：残差与拟合值的关系图}
+\PY{n}{res} \PY{o}{=} \PY{n}{data\PYZus{}res}\PY{p}{[}\PY{p}{:}\PY{p}{,}\PY{l+m+mi}{1}\PY{p}{]}
+\PY{n}{y} \PY{o}{=} \PY{p}{[}\PY{p}{]}
+\PY{k}{for} \PY{n}{i} \PY{o+ow}{in} \PY{n+nb}{range}\PY{p}{(}\PY{n}{a}\PY{p}{)}\PY{p}{:}
+    \PY{k}{for} \PY{n}{j} \PY{o+ow}{in} \PY{n+nb}{range}\PY{p}{(}\PY{n}{n}\PY{p}{)}\PY{p}{:}
+        \PY{n}{y}\PY{o}{.}\PY{n}{append}\PY{p}{(}\PY{n}{np}\PY{o}{.}\PY{n}{mean}\PY{p}{(}\PY{n}{data}\PY{p}{[}\PY{p}{(}\PY{n}{data}\PY{p}{[}\PY{p}{:}\PY{p}{,}\PY{l+m+mi}{0}\PY{p}{]} \PY{o}{==} \PY{n}{i} \PY{o}{+} \PY{l+m+mi}{1}\PY{p}{)}\PY{p}{,}\PY{l+m+mi}{1}\PY{p}{]}\PY{p}{)}\PY{p}{)}
+\PY{n}{plt}\PY{o}{.}\PY{n}{scatter}\PY{p}{(}\PY{n}{y}\PY{p}{,} \PY{n}{res}\PY{p}{,} \PY{n}{c} \PY{o}{=} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{red}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\PY{n}{plt}\PY{o}{.}\PY{n}{title}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Plot of residuals versus yˆij}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+\PY{n}{plt}\PY{o}{.}\PY{n}{xlabel}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{y\PYZca{}ij}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+\PY{n}{plt}\PY{o}{.}\PY{n}{ylabel}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{e\PYZus{}ij}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+
+\PY{c+c1}{\PYZsh{} 法2：用Bartlett检验进行方差齐性检验}
+\PY{n}{bart}\PY{p}{,} \PY{n}{pVal2} \PY{o}{=} \PY{n}{stats}\PY{o}{.}\PY{n}{bartlett}\PY{p}{(}\PY{n}{group1}\PY{p}{,} \PY{n}{group2}\PY{p}{,} \PY{n}{group3}\PY{p}{,} \PY{n}{group4}\PY{p}{,} \PY{n}{group5}\PY{p}{)}
+\PY{n}{bart\PYZus{}stat} \PY{o}{=} \PY{n}{stats}\PY{o}{.}\PY{n}{chi2}\PY{o}{.}\PY{n}{isf}\PY{p}{(}\PY{n}{alpha}\PY{p}{,} \PY{n}{a} \PY{o}{\PYZhy{}} \PY{l+m+mi}{1}\PY{p}{)}
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Bartlett检验的P值为：}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{pVal2}\PY{p}{)}
+\PY{k}{if} \PY{n}{pVal2} \PY{o}{\PYZlt{}} \PY{n}{alpha}\PY{p}{:}
+    \PY{n+nb}{print}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Since p\PYZhy{}value \PYZlt{} 0.05, reject H0.}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+\PY{k}{else}\PY{p}{:}
+    \PY{n+nb}{print}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Accept H0}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}  
+
+\PY{c+c1}{\PYZsh{} 法3：用Levene检验进行方差齐性检验}
+\PY{n}{lene}\PY{p}{,} \PY{n}{pVal3} \PY{o}{=} \PY{n}{stats}\PY{o}{.}\PY{n}{levene}\PY{p}{(}\PY{n}{group1}\PY{p}{,} \PY{n}{group2}\PY{p}{,} \PY{n}{group3}\PY{p}{,} \PY{n}{group4}\PY{p}{,} \PY{n}{group5}\PY{p}{)}
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+se}{\PYZbs{}n}\PY{l+s+s1}{Levene检验的P值为：}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{pVal3}\PY{p}{)}
+\PY{k}{if} \PY{n}{pVal3} \PY{o}{\PYZlt{}} \PY{n}{alpha}\PY{p}{:}
+    \PY{n+nb}{print}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Since p\PYZhy{}value \PYZlt{} 0.05, reject H0.}\PY{l+s+se}{\PYZbs{}n}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+\PY{k}{else}\PY{p}{:}
+    \PY{n+nb}{print}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Accept H0}\PY{l+s+se}{\PYZbs{}n}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}  
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+Bartlett检验的P值为： 3.608342631295821e-15
+Since p-value < 0.05, reject H0.
+
+Levene检验的P值为： 0.0043438474446047285
+Since p-value < 0.05, reject H0.
+
+    \end{Verbatim}
+
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{output_7_1.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+    由分析可知:\\
+1. 残差与拟合值的关系图：呈现开口向外的漏斗型； 2. Bartlett
+检验法：P值接近0，\(3.6\times 10^{-15}\) \textless{} 0.05； 3.
+Levene检验法：P值为 0.0043 \textless{} 0.05.
+
+由以上三种方法得出共同结论：拒绝方差相等的原假设。即认为数据具有异方差性，需要对数据进行变换。
+
+    \textbf{Q3:}\\
+由第二题的结论可知，残差具有异方差性。由残差与拟合值的关系图可以看出，随着\(\hat{y}_{ij}\)的增大，残差不断增大，每组数据的方差也随之增大。为了研究峰值流量如何采用方差稳定化变换，需画出\(logS_i\)和\(log\overline{y}_{i·}\)的关系图。这是为了找出每一组内方差随均值变化的规律并由此进行变换。同时由于组间的方差和均值差距较大，所以对横纵坐标同时取了对数。
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{4}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{c+c1}{\PYZsh{} 求出各估计方法的标准差sigma\PYZus{}i和均值mu\PYZus{}i的对数}
+\PY{c+c1}{\PYZsh{} 通常用样本的标准差std\PYZus{}i和均值y\PYZus{}i代替总体的标准差sigma\PYZus{}i和均值mu\PYZus{}i}
+\PY{n}{log\PYZus{}y\PYZus{}1} \PY{o}{=} \PY{n}{math}\PY{o}{.}\PY{n}{log}\PY{p}{(}\PY{n}{np}\PY{o}{.}\PY{n}{mean}\PY{p}{(}\PY{n}{group1}\PY{p}{)}\PY{p}{)}
+\PY{n}{log\PYZus{}y\PYZus{}2} \PY{o}{=} \PY{n}{math}\PY{o}{.}\PY{n}{log}\PY{p}{(}\PY{n}{np}\PY{o}{.}\PY{n}{mean}\PY{p}{(}\PY{n}{group2}\PY{p}{)}\PY{p}{)}
+\PY{n}{log\PYZus{}y\PYZus{}3} \PY{o}{=} \PY{n}{math}\PY{o}{.}\PY{n}{log}\PY{p}{(}\PY{n}{np}\PY{o}{.}\PY{n}{mean}\PY{p}{(}\PY{n}{group3}\PY{p}{)}\PY{p}{)}
+\PY{n}{log\PYZus{}y\PYZus{}4} \PY{o}{=} \PY{n}{math}\PY{o}{.}\PY{n}{log}\PY{p}{(}\PY{n}{np}\PY{o}{.}\PY{n}{mean}\PY{p}{(}\PY{n}{group4}\PY{p}{)}\PY{p}{)}
+\PY{n}{log\PYZus{}y\PYZus{}5} \PY{o}{=} \PY{n}{math}\PY{o}{.}\PY{n}{log}\PY{p}{(}\PY{n}{np}\PY{o}{.}\PY{n}{mean}\PY{p}{(}\PY{n}{group5}\PY{p}{)}\PY{p}{)}
+\PY{n}{log\PYZus{}y} \PY{o}{=} \PY{p}{[}\PY{n}{log\PYZus{}y\PYZus{}1}\PY{p}{,} \PY{n}{log\PYZus{}y\PYZus{}2}\PY{p}{,} \PY{n}{log\PYZus{}y\PYZus{}3}\PY{p}{,} \PY{n}{log\PYZus{}y\PYZus{}4}\PY{p}{,} \PY{n}{log\PYZus{}y\PYZus{}5}\PY{p}{]}
+
+\PY{n}{log\PYZus{}std\PYZus{}1} \PY{o}{=} \PY{n}{math}\PY{o}{.}\PY{n}{log}\PY{p}{(}\PY{n}{np}\PY{o}{.}\PY{n}{std}\PY{p}{(}\PY{n}{group1}\PY{p}{,} \PY{n}{ddof} \PY{o}{=} \PY{l+m+mi}{1}\PY{p}{)}\PY{p}{)}
+\PY{n}{log\PYZus{}std\PYZus{}2} \PY{o}{=} \PY{n}{math}\PY{o}{.}\PY{n}{log}\PY{p}{(}\PY{n}{np}\PY{o}{.}\PY{n}{std}\PY{p}{(}\PY{n}{group2}\PY{p}{,} \PY{n}{ddof} \PY{o}{=} \PY{l+m+mi}{1}\PY{p}{)}\PY{p}{)}
+\PY{n}{log\PYZus{}std\PYZus{}3} \PY{o}{=} \PY{n}{math}\PY{o}{.}\PY{n}{log}\PY{p}{(}\PY{n}{np}\PY{o}{.}\PY{n}{std}\PY{p}{(}\PY{n}{group3}\PY{p}{,} \PY{n}{ddof} \PY{o}{=} \PY{l+m+mi}{1}\PY{p}{)}\PY{p}{)}
+\PY{n}{log\PYZus{}std\PYZus{}4} \PY{o}{=} \PY{n}{math}\PY{o}{.}\PY{n}{log}\PY{p}{(}\PY{n}{np}\PY{o}{.}\PY{n}{std}\PY{p}{(}\PY{n}{group4}\PY{p}{,} \PY{n}{ddof} \PY{o}{=} \PY{l+m+mi}{1}\PY{p}{)}\PY{p}{)}
+\PY{n}{log\PYZus{}std\PYZus{}5} \PY{o}{=} \PY{n}{math}\PY{o}{.}\PY{n}{log}\PY{p}{(}\PY{n}{np}\PY{o}{.}\PY{n}{std}\PY{p}{(}\PY{n}{group5}\PY{p}{,} \PY{n}{ddof} \PY{o}{=} \PY{l+m+mi}{1}\PY{p}{)}\PY{p}{)}
+\PY{n}{log\PYZus{}std} \PY{o}{=} \PY{p}{[}\PY{n}{log\PYZus{}std\PYZus{}1}\PY{p}{,} \PY{n}{log\PYZus{}std\PYZus{}2}\PY{p}{,} \PY{n}{log\PYZus{}std\PYZus{}3}\PY{p}{,} \PY{n}{log\PYZus{}std\PYZus{}4}\PY{p}{,} \PY{n}{log\PYZus{}std\PYZus{}5}\PY{p}{]}
+
+\PY{c+c1}{\PYZsh{} linregress(x,y)线性回归函数}
+\PY{n}{slope}\PY{p}{,} \PY{n}{intercept}\PY{p}{,} \PY{n}{r\PYZus{}value}\PY{p}{,} \PY{n}{p\PYZus{}value}\PY{p}{,} \PY{n}{std\PYZus{}err} \PY{o}{=} \PY{n}{stats}\PY{o}{.}\PY{n}{linregress}\PY{p}{(}\PY{n}{log\PYZus{}y}\PY{p}{,} \PY{n}{log\PYZus{}std}\PY{p}{)}
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{斜率为：}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n+nb}{round}\PY{p}{(}\PY{n}{slope}\PY{p}{,} \PY{l+m+mi}{2}\PY{p}{)}\PY{p}{)}
+
+\PY{c+c1}{\PYZsh{} 作图}
+\PY{n}{plt}\PY{o}{.}\PY{n}{scatter}\PY{p}{(}\PY{n}{log\PYZus{}y}\PY{p}{,} \PY{n}{log\PYZus{}std}\PY{p}{)}
+\PY{n}{plt}\PY{o}{.}\PY{n}{title}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Plot of log\PYZus{}Si versus log yi· for the peak discharge data}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+\PY{n}{plt}\PY{o}{.}\PY{n}{xlabel}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{log\PYZus{}yi·}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+\PY{n}{plt}\PY{o}{.}\PY{n}{ylabel}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{log\PYZus{}Si}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+斜率为： 0.92
+    \end{Verbatim}
+
+            \begin{tcolorbox}[breakable, size=fbox, boxrule=.5pt, pad at break*=1mm, opacityfill=0]
+\prompt{Out}{outcolor}{4}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+Text(0, 0.5, 'log\_Si')
+\end{Verbatim}
+\end{tcolorbox}
+        
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{output_10_2.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+    由上图可知，过这 5 点的直线斜率接近 \(0.92\) ，即 \(\alpha= 0.92\)。根据
+\(\lambda = 1−\alpha,\ \lambda = 0.08\)。对原始数据可以通过幂变换进行方差稳定化变换，变换的方式为：对
+y 值取0.08次方，变换后的数据为 \(y^* = y^{0.08}\)。
+
+    为了检验变换后的数据是否具有异方差性，定义如下函数处理变换后的数据。该函数可以打印出变换后的数据，然后计算其残差，并画出残差与拟合值的关系图。通过观察关系图来大致观察变换后的数据是否具有异方差性。函数代码如下：
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{5}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{k}{def} \PY{n+nf}{check\PYZus{}residual}\PY{p}{(}\PY{n}{sqrt\PYZus{}groups}\PY{p}{)}\PY{p}{:}
+    \PY{n}{sqrt\PYZus{}groups1} \PY{o}{=} \PY{n}{pd}\PY{o}{.}\PY{n}{DataFrame}\PY{p}{(}\PY{n}{sqrt\PYZus{}groups}\PY{p}{)}
+    \PY{n+nb}{print}\PY{p}{(}\PY{n}{sqrt\PYZus{}groups1}\PY{p}{)}
+    
+    \PY{c+c1}{\PYZsh{} 计算变换后峰值流量的残差}
+    \PY{n}{df} \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{array}\PY{p}{(}\PY{n}{sqrt\PYZus{}groups}\PY{p}{)}
+    \PY{n}{sqrt\PYZus{}data} \PY{o}{=} \PY{p}{[}\PY{n}{data}\PY{p}{[}\PY{p}{:}\PY{p}{,}\PY{l+m+mi}{0}\PY{p}{]}\PY{p}{,} \PY{n}{df}\PY{o}{.}\PY{n}{reshape}\PY{p}{(}\PY{l+m+mi}{1}\PY{p}{,} \PY{l+m+mi}{20}\PY{p}{)}\PY{o}{.}\PY{n}{tolist}\PY{p}{(}\PY{p}{)}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{]}\PY{p}{]}
+    \PY{n}{sqrt\PYZus{}data} \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{array}\PY{p}{(}\PY{n}{sqrt\PYZus{}data} \PY{o}{*} \PY{l+m+mi}{1}\PY{p}{)}\PY{o}{.}\PY{n}{T}
+    \PY{n}{sqrt\PYZus{}data\PYZus{}res} \PY{o}{=} \PY{n}{sqrt\PYZus{}data} \PY{o}{*} \PY{l+m+mi}{1}
+    \PY{k}{for} \PY{n}{k} \PY{o+ow}{in} \PY{n+nb}{range}\PY{p}{(}\PY{n}{a}\PY{p}{)}\PY{p}{:}
+        \PY{n}{sqrt\PYZus{}cnt} \PY{o}{=} \PY{n}{sqrt\PYZus{}data\PYZus{}res}\PY{p}{[}\PY{n}{sqrt\PYZus{}data\PYZus{}res}\PY{p}{[}\PY{p}{:}\PY{p}{,}\PY{l+m+mi}{0}\PY{p}{]} \PY{o}{==} \PY{n}{k} \PY{o}{+} \PY{l+m+mi}{1}\PY{p}{,}\PY{l+m+mi}{1}\PY{p}{]}
+        \PY{n}{sqrt\PYZus{}data\PYZus{}res}\PY{p}{[}\PY{n}{sqrt\PYZus{}data\PYZus{}res}\PY{p}{[}\PY{p}{:}\PY{p}{,}\PY{l+m+mi}{0}\PY{p}{]} \PY{o}{==} \PY{n}{k} \PY{o}{+} \PY{l+m+mi}{1}\PY{p}{,}\PY{l+m+mi}{1}\PY{p}{]} \PY{o}{=} \PY{n}{sqrt\PYZus{}cnt} \PY{o}{\PYZhy{}} \PY{n}{np}\PY{o}{.}\PY{n}{mean}\PY{p}{(}\PY{n}{sqrt\PYZus{}cnt}\PY{p}{)}
+
+    \PY{c+c1}{\PYZsh{} 变换后的残差与拟合值的关系图}
+    \PY{n}{sqrt\PYZus{}res} \PY{o}{=} \PY{n}{sqrt\PYZus{}data\PYZus{}res}\PY{p}{[}\PY{p}{:}\PY{p}{,}\PY{l+m+mi}{1}\PY{p}{]}
+    \PY{n}{sqrt\PYZus{}y} \PY{o}{=} \PY{p}{[}\PY{p}{]}
+    \PY{k}{for} \PY{n}{i} \PY{o+ow}{in} \PY{n+nb}{range}\PY{p}{(}\PY{n}{a}\PY{p}{)}\PY{p}{:}
+        \PY{k}{for} \PY{n}{j} \PY{o+ow}{in} \PY{n+nb}{range}\PY{p}{(}\PY{n}{n}\PY{p}{)}\PY{p}{:}
+            \PY{n}{sqrt\PYZus{}y}\PY{o}{.}\PY{n}{append}\PY{p}{(}\PY{n}{np}\PY{o}{.}\PY{n}{mean}\PY{p}{(}\PY{n}{sqrt\PYZus{}data}\PY{p}{[}\PY{p}{(}\PY{n}{sqrt\PYZus{}data}\PY{p}{[}\PY{p}{:}\PY{p}{,}\PY{l+m+mi}{0}\PY{p}{]} \PY{o}{==} \PY{n}{i} \PY{o}{+} \PY{l+m+mi}{1}\PY{p}{)}\PY{p}{,}\PY{l+m+mi}{1}\PY{p}{]}\PY{p}{)}\PY{p}{)}
+    \PY{n}{plt}\PY{o}{.}\PY{n}{scatter}\PY{p}{(}\PY{n}{sqrt\PYZus{}y}\PY{p}{,} \PY{n}{sqrt\PYZus{}res}\PY{p}{,} \PY{n}{c} \PY{o}{=} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{red}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+    \PY{n}{plt}\PY{o}{.}\PY{n}{title}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Plot of residuals versus y\PYZus{}ij*}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+    \PY{n}{plt}\PY{o}{.}\PY{n}{xlabel}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{y\PYZus{}ij*}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+    \PY{n}{plt}\PY{o}{.}\PY{n}{ylabel}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{e\PYZus{}ij*}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    本题中我选取了幂变换，对数变换，Box-Cox变换共三种变换来对y值进行方差稳定化变换。代码如下。
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{6}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{c+c1}{\PYZsh{} 对y值进行幂变换，即通过n次方或开方进行方差稳定化变换}
+\PY{n}{lmda} \PY{o}{=} \PY{l+m+mf}{0.08}
+\PY{n}{sqrt\PYZus{}group1} \PY{o}{=} \PY{n}{group1} \PY{o}{*}\PY{o}{*} \PY{n}{lmda}
+\PY{n}{sqrt\PYZus{}group2} \PY{o}{=} \PY{n}{group2} \PY{o}{*}\PY{o}{*} \PY{n}{lmda}
+\PY{n}{sqrt\PYZus{}group3} \PY{o}{=} \PY{n}{group3} \PY{o}{*}\PY{o}{*} \PY{n}{lmda}
+\PY{n}{sqrt\PYZus{}group4} \PY{o}{=} \PY{n}{group4} \PY{o}{*}\PY{o}{*} \PY{n}{lmda}
+\PY{n}{sqrt\PYZus{}group5} \PY{o}{=} \PY{n}{group5} \PY{o}{*}\PY{o}{*} \PY{n}{lmda}
+\PY{n}{sqrt\PYZus{}groups} \PY{o}{=} \PY{p}{[}\PY{n}{sqrt\PYZus{}group1}\PY{p}{,} \PY{n}{sqrt\PYZus{}group2}\PY{p}{,} \PY{n}{sqrt\PYZus{}group3}\PY{p}{,} \PY{n}{sqrt\PYZus{}group4}\PY{p}{,} \PY{n}{sqrt\PYZus{}group5}\PY{p}{]}
+
+\PY{n}{check\PYZus{}residual}\PY{p}{(}\PY{n}{sqrt\PYZus{}groups}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+          0         1         2         3
+0  1.456503  1.498553  1.524137  1.513678
+1  1.000000  1.057018  1.117287  1.260149
+2  1.720119  1.769780  1.985109  1.954875
+3  1.642738  2.031448  1.986040  2.090130
+4  1.168444  1.137411  1.309157  1.057018
+    \end{Verbatim}
+
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{output_15_1.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{7}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{c+c1}{\PYZsh{} 对y值进行对数变换，即通过取对数进行方差稳定化变换}
+\PY{n}{log\PYZus{}group1} \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{log}\PY{p}{(}\PY{n}{group1}\PY{p}{)}
+\PY{n}{log\PYZus{}group2} \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{log}\PY{p}{(}\PY{n}{group2}\PY{p}{)}
+\PY{n}{log\PYZus{}group3} \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{log}\PY{p}{(}\PY{n}{group3}\PY{p}{)}
+\PY{n}{log\PYZus{}group4} \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{log}\PY{p}{(}\PY{n}{group4}\PY{p}{)}
+\PY{n}{log\PYZus{}group5} \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{log}\PY{p}{(}\PY{n}{group5}\PY{p}{)}
+\PY{n}{log\PYZus{}groups} \PY{o}{=} \PY{p}{[}\PY{n}{log\PYZus{}group1}\PY{p}{,} \PY{n}{log\PYZus{}group2}\PY{p}{,} \PY{n}{log\PYZus{}group3}\PY{p}{,} \PY{n}{log\PYZus{}group4}\PY{p}{,} \PY{n}{log\PYZus{}group5}\PY{p}{]}
+
+\PY{n}{check\PYZus{}residual}\PY{p}{(}\PY{n}{log\PYZus{}groups}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+          0         1         2         3
+0  4.700480  5.056246  5.267858  5.181784
+1  0.000000  0.693147  1.386294  2.890372
+2  6.779922  7.135687  8.570924  8.379080
+3  6.204558  8.859363  8.576782  9.215328
+4  1.945910  1.609438  3.367296  0.693147
+    \end{Verbatim}
+
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{output_16_1.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+    【补充】Box-Cox变换：Box-Cox变换的主要特点是引入一个参数
+\(\lambda\)，通过数据本身估计该参数进而确定应采取的数据变换形式，Box-Cox变换可以明显地改善数据的正态性、方差齐性。\\
+Box-Cox变换的一般形式为：\\
+\[ y(\lambda)=\left\{
+\begin{aligned}
+\frac{(y+c)^{\lambda}-1}{\lambda} & ,&\lambda \neq 0 \\
+\ln (y+c) & ,& \lambda = 0 
+\end{aligned}
+\right.
+\] 式中\(y(\lambda)\)为经Box-Cox变换后得到的新变量，\(y\)
+为原始连续因变量，其中 \(y+c\) 的 \(+c\) 是为了确保
+\((y+c)>0\),因为在Box-Cox变换中要求 \(y>0\)，\(\lambda\) 为变换参数。\\
+在这里可以看到 \(\lambda\)
+的值是需要我们自己去确定的，那么怎么去确定呢？这里使用的方法是假设经过转换后的因变量就是服从正态分布的，然后画出关于
+\(\lambda\) 的似然函数，似然函数值最大的时候 \(\lambda\)
+的取值就是这里需要确定的值。
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{8}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{c+c1}{\PYZsh{} 作Box\PYZhy{}Cox变换}
+\PY{n}{bc}\PY{p}{,} \PY{n}{lmax\PYZus{}mle} \PY{o}{=} \PY{n}{stats}\PY{o}{.}\PY{n}{boxcox}\PY{p}{(}\PY{n}{data}\PY{p}{[}\PY{p}{:}\PY{p}{,}\PY{l+m+mi}{1}\PY{p}{]}\PY{p}{)}
+\PY{n}{lmax\PYZus{}pearsonr} \PY{o}{=} \PY{n}{stats}\PY{o}{.}\PY{n}{boxcox\PYZus{}normmax}\PY{p}{(}\PY{n}{data}\PY{p}{[}\PY{p}{:}\PY{p}{,}\PY{l+m+mi}{1}\PY{p}{]}\PY{p}{)}
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{lmax\PYZus{}mle: }\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{lmax\PYZus{}mle}\PY{p}{)}
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{lmax\PYZus{}pearsonr: }\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{lmax\PYZus{}pearsonr}\PY{p}{)}
+
+\PY{n}{fig} \PY{o}{=} \PY{n}{plt}\PY{o}{.}\PY{n}{figure}\PY{p}{(}\PY{p}{)}
+\PY{n}{ax} \PY{o}{=} \PY{n}{fig}\PY{o}{.}\PY{n}{add\PYZus{}subplot}\PY{p}{(}\PY{l+m+mi}{111}\PY{p}{)}
+\PY{n}{prob} \PY{o}{=} \PY{n}{stats}\PY{o}{.}\PY{n}{boxcox\PYZus{}normplot}\PY{p}{(}\PY{n}{data}\PY{p}{[}\PY{p}{:}\PY{p}{,}\PY{l+m+mi}{1}\PY{p}{]}\PY{p}{,} \PY{o}{\PYZhy{}}\PY{l+m+mi}{10}\PY{p}{,} \PY{l+m+mi}{10}\PY{p}{,} \PY{n}{plot} \PY{o}{=} \PY{n}{ax}\PY{p}{)}
+\PY{n}{ax}\PY{o}{.}\PY{n}{axvline}\PY{p}{(}\PY{n}{lmax\PYZus{}mle}\PY{p}{,} \PY{n}{color}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{r}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+\PY{n}{ax}\PY{o}{.}\PY{n}{axvline}\PY{p}{(}\PY{n}{lmax\PYZus{}pearsonr}\PY{p}{,} \PY{n}{color}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{g}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{ls}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{\PYZhy{}\PYZhy{}}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+\PY{n}{plt}\PY{o}{.}\PY{n}{show}\PY{p}{(}\PY{p}{)}
+
+\PY{c+c1}{\PYZsh{} 计算变换后峰值流量的残差}
+\PY{n}{bc\PYZus{}group1} \PY{o}{=} \PY{n}{bc}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{:}\PY{l+m+mi}{4}\PY{p}{]}
+\PY{n}{bc\PYZus{}group2} \PY{o}{=} \PY{n}{bc}\PY{p}{[}\PY{l+m+mi}{4}\PY{p}{:}\PY{l+m+mi}{8}\PY{p}{]}
+\PY{n}{bc\PYZus{}group3} \PY{o}{=} \PY{n}{bc}\PY{p}{[}\PY{l+m+mi}{8}\PY{p}{:}\PY{l+m+mi}{12}\PY{p}{]}
+\PY{n}{bc\PYZus{}group4} \PY{o}{=} \PY{n}{bc}\PY{p}{[}\PY{l+m+mi}{12}\PY{p}{:}\PY{l+m+mi}{16}\PY{p}{]}
+\PY{n}{bc\PYZus{}group5} \PY{o}{=} \PY{n}{bc}\PY{p}{[}\PY{l+m+mi}{16}\PY{p}{:}\PY{l+m+mi}{20}\PY{p}{]}
+\PY{n}{bc\PYZus{}groups} \PY{o}{=} \PY{p}{[}\PY{n}{bc\PYZus{}group1}\PY{p}{,} \PY{n}{bc\PYZus{}group2}\PY{p}{,} \PY{n}{bc\PYZus{}group3}\PY{p}{,} \PY{n}{bc\PYZus{}group4}\PY{p}{,} \PY{n}{bc\PYZus{}group5}\PY{p}{]}
+
+\PY{n}{check\PYZus{}residual}\PY{p}{(}\PY{n}{bc\PYZus{}groups}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+lmax\_mle:  0.016756747738272192
+lmax\_pearsonr:  0.014405187672448234
+    \end{Verbatim}
+
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{output_18_1.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+    \begin{Verbatim}[commandchars=\\\{\}]
+          0         1         2         3
+0  4.890554  5.276624  5.507356  5.413405
+1  0.000000  0.697188  1.402521  2.961511
+2  7.180062  7.579822  9.216959  8.995842
+3  6.538571  9.550754  9.223723  9.964921
+4  1.977983  1.631337  3.464108  0.697188
+    \end{Verbatim}
+
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{output_18_3.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+    由以上三个变换后得出的数据和图可知，虽然变换后的数据大小不一，但残差与拟合值的关系图都没有呈现漏斗型。这说明经过变换后的数据大致不再具有异方差性，具体的方差齐性检验将在下一问中给出。
+
+    \textbf{Q4:}\\
+本问的检验假设仍为\(H_0: \mu_1 = \mu_2 = \mu_3 = \mu_4\) vs
+\(H_1: \mu_1, \mu_2, \mu_3, \mu_4\)不全相等。但此处的平均值是对变换后的数据取得的平均值，而非对原数据取得的平均值。
+
+定义如下函数对数据进行检验。首先使用Levene检验对变换后的数据进行方差齐性检验，然后使用变换后的数据进行方差分析，并打印出方差分析表。函数打印的第一个结果是Levene检验的结果，若接受原假设说明数据具有方差齐性。第二个结果是方差分析的结果，若拒绝原假设说明因子水平显著。
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{9}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{k}{def} \PY{n+nf}{Levene\PYZus{}and\PYZus{}ANOVA}\PY{p}{(}\PY{n}{group1}\PY{p}{,} \PY{n}{group2}\PY{p}{,} \PY{n}{group3}\PY{p}{,} \PY{n}{group4}\PY{p}{,} \PY{n}{group5}\PY{p}{)}\PY{p}{:}
+
+    \PY{n}{groups} \PY{o}{=} \PY{p}{[}\PY{n}{group1}\PY{p}{,} \PY{n}{group2}\PY{p}{,} \PY{n}{group3}\PY{p}{,} \PY{n}{group4}\PY{p}{,} \PY{n}{group5}\PY{p}{]}
+
+    \PY{c+c1}{\PYZsh{} 变换后，再用Levene检验进行方差齐性检验 }
+    \PY{n}{lene}\PY{p}{,} \PY{n}{pVal5} \PY{o}{=} \PY{n}{stats}\PY{o}{.}\PY{n}{levene}\PY{p}{(}\PY{n}{group1}\PY{p}{,} \PY{n}{group2}\PY{p}{,} \PY{n}{group3}\PY{p}{,} \PY{n}{group4}\PY{p}{,} \PY{n}{group5}\PY{p}{)}
+    \PY{k}{if} \PY{n}{pVal5} \PY{o}{\PYZlt{}} \PY{n}{alpha}\PY{p}{:}
+        \PY{n+nb}{print}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Since p\PYZhy{}value \PYZlt{} 0.05, reject H0.}\PY{l+s+se}{\PYZbs{}n}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+    \PY{k}{else}\PY{p}{:}
+        \PY{n+nb}{print}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Accept H0}\PY{l+s+se}{\PYZbs{}n}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)} 
+
+    \PY{c+c1}{\PYZsh{} 变换后，Do the one\PYZhy{}way ANOVA with transformation}
+    \PY{n}{F0}\PY{p}{,} \PY{n}{pVal7} \PY{o}{=} \PY{n}{stats}\PY{o}{.}\PY{n}{f\PYZus{}oneway}\PY{p}{(}\PY{n}{group1}\PY{p}{,} \PY{n}{group2}\PY{p}{,} \PY{n}{group3}\PY{p}{,} \PY{n}{group4}\PY{p}{,} \PY{n}{group5}\PY{p}{)}
+    \PY{k}{if} \PY{n}{pVal7} \PY{o}{\PYZlt{}} \PY{n}{alpha}\PY{p}{:}
+        \PY{n+nb}{print}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Since p\PYZhy{}value \PYZlt{} 0.05, reject H0.}\PY{l+s+se}{\PYZbs{}n}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+    \PY{k}{else}\PY{p}{:}
+        \PY{n+nb}{print}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Accept H0}\PY{l+s+se}{\PYZbs{}n}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)} 
+
+    \PY{c+c1}{\PYZsh{} Elegant alternative implementation, with pandas \PYZam{} statsmodels}
+    \PY{k}{for} \PY{n}{i} \PY{o+ow}{in} \PY{n+nb}{range}\PY{p}{(}\PY{n}{a}\PY{p}{)}\PY{p}{:}
+        \PY{n}{data}\PY{p}{[}\PY{l+m+mi}{0} \PY{o}{+} \PY{l+m+mi}{4} \PY{o}{*} \PY{n}{i}\PY{p}{:}\PY{l+m+mi}{4} \PY{o}{*} \PY{p}{(}\PY{n}{i} \PY{o}{+} \PY{l+m+mi}{1}\PY{p}{)}\PY{p}{,} \PY{l+m+mi}{1}\PY{p}{]} \PY{o}{=} \PY{n+nb}{list}\PY{p}{(}\PY{n}{groups}\PY{p}{[}\PY{n}{i}\PY{p}{]}\PY{p}{)}
+    \PY{n}{df} \PY{o}{=} \PY{n}{pd}\PY{o}{.}\PY{n}{DataFrame}\PY{p}{(}\PY{n}{data}\PY{p}{,} \PY{n}{columns} \PY{o}{=} \PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{method}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Y}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{p}{)}   
+    \PY{n}{model} \PY{o}{=} \PY{n}{ols}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Y \PYZti{} C(method)}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{df}\PY{p}{)}\PY{o}{.}\PY{n}{fit}\PY{p}{(}\PY{p}{)}
+    \PY{n}{anovaResults} \PY{o}{=} \PY{n}{anova\PYZus{}lm}\PY{p}{(}\PY{n}{model}\PY{p}{)}
+    \PY{n+nb}{print}\PY{p}{(}\PY{n}{anovaResults}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{10}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{c+c1}{\PYZsh{} 幂变换后，进行方差齐性检验和one\PYZhy{}way ANOVA}
+\PY{n}{Levene\PYZus{}and\PYZus{}ANOVA}\PY{p}{(}\PY{n}{sqrt\PYZus{}group1}\PY{p}{,} \PY{n}{sqrt\PYZus{}group2}\PY{p}{,} \PY{n}{sqrt\PYZus{}group3}\PY{p}{,} \PY{n}{sqrt\PYZus{}group4}\PY{p}{,} \PY{n}{sqrt\PYZus{}group5}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+Accept H0
+
+Since p-value < 0.05, reject H0.
+
+             df    sum\_sq   mean\_sq          F        PR(>F)
+C(method)   4.0  2.326792  0.581698  35.322436  1.807989e-07
+Residual   15.0  0.247023  0.016468        NaN           NaN
+    \end{Verbatim}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{11}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{c+c1}{\PYZsh{} 对数变换后，进行方差齐性检验和one\PYZhy{}way ANOVA}
+\PY{n}{Levene\PYZus{}and\PYZus{}ANOVA}\PY{p}{(}\PY{n}{log\PYZus{}group1}\PY{p}{,} \PY{n}{log\PYZus{}group2}\PY{p}{,} \PY{n}{log\PYZus{}group3}\PY{p}{,} \PY{n}{log\PYZus{}group4}\PY{p}{,} \PY{n}{log\PYZus{}group5}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+Accept H0
+
+Since p-value < 0.05, reject H0.
+
+             df      sum\_sq    mean\_sq         F        PR(>F)
+C(method)   4.0  165.056458  41.264114  37.65686  1.176093e-07
+Residual   15.0   16.436891   1.095793       NaN           NaN
+    \end{Verbatim}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{12}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{c+c1}{\PYZsh{} bc变换后，进行方差齐性检验和one\PYZhy{}way ANOVA}
+\PY{n}{Levene\PYZus{}and\PYZus{}ANOVA}\PY{p}{(}\PY{n}{bc\PYZus{}group1}\PY{p}{,} \PY{n}{bc\PYZus{}group2}\PY{p}{,} \PY{n}{bc\PYZus{}group3}\PY{p}{,} \PY{n}{bc\PYZus{}group4}\PY{p}{,} \PY{n}{bc\PYZus{}group5}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+Accept H0
+
+Since p-value < 0.05, reject H0.
+
+             df      sum\_sq    mean\_sq          F        PR(>F)
+C(method)   4.0  193.668327  48.417082  37.624897  1.182844e-07
+Residual   15.0   19.302544   1.286836        NaN           NaN
+    \end{Verbatim}
+
+    对三种变换进行检验得到的结果大体上是相同的。由第一个结论可知，稳定化变换后的残差具有方差齐性。再进行单因素方差分析，由方差分析表知，P值均小于0.05且接近于0，故拒绝原假设，即
+5 种绝缘材料的性能存在差异。
+
+从最终结果来看，对数变换和bc变换得到的数据大小和方差分析表中的数据比较相似，而幂变换得到的数据比较小，接近于0。这也导致幂变换计算得到的\(S_A,\ S_e,\ MS_A,\ MS_e\)也远小于另外两种变换的同一统计量。在精度不足时，应尽量选用对数变换和bc变换。
+
+\newpage
+
+    \hypertarget{ux7b2cux4e8cux5468ux4f5cux4e1a}{%
+\section{第二周作业}\label{ux7b2cux4e8cux5468ux4f5cux4e1a}}
+
+計算\(E[MS_A],\ E[MS_B],\ E[MS_{AB}],\ E[MS_E].\)
+
+    解： \begin{spilt}
+E[MS_A]=E[\frac{SS_A}{df_A}]=\frac1{a-1}E[SS_A].\ 令\overline y=\frac1n\Sigma_{i=1}^a\Sigma_{j=1}^b\Sigma_{k=1}^my_{ijk}.\\
+\mu_{i..}=\frac1{bm}\Sigma_{j=1}^b\Sigma_{k=1}^m\mu_{ij}=\frac1{bm}\Sigma_{j=1}^b\Sigma_{k=1}^m(\mu+\alpha_i+\beta_j+(\alpha\beta)_{ij})=\mu+\alpha_i+\frac1{b}\Sigma_{j=1}^b(\beta_j+(\alpha\beta)_{ij})=\mu+\alpha_i,\\
+E[SS_A]=E[bm\Sigma_{i=1}^a(\overline y_{i..}-\overline y)^2]=bmE[\Sigma_{i=1}^a((\mu_{i..}+\overline\epsilon_{i..})-(\mu+\overline \epsilon))^2]
+=bmE[\Sigma_{i=1}^a(\alpha_i+\overline\epsilon_{i..}-\overline \epsilon)^2]\\
+=bmE[\Sigma_{i=1}^a(\alpha_i^2+(\overline\epsilon_{i..}-\overline \epsilon)^2+2\alpha_i(\overline\epsilon_{i..}-\overline \epsilon))]=bm\Sigma_{i=1}^a\{E[\alpha_i^2]+E[(\overline\epsilon_{i..}-\overline \epsilon)^2]+2E[\alpha_i(\overline\epsilon_{i..}-\overline \epsilon)]\}\\=bm\Sigma_{i=1}^a\{\alpha_i^2+E[(\overline\epsilon_{i..}-\overline \epsilon)^2]+2\alpha_iE[\overline\epsilon_{i..}-\overline \epsilon]\}=bm\Sigma_{i=1}^a\{\alpha_i^2+E[(\overline\epsilon_{i..}-\overline \epsilon)^2]\}\\
+=bm\Sigma_{i=1}^a\alpha_i^2+E[bm\Sigma_{i=1}^a(\overline\epsilon_{i..}-\overline \epsilon)^2]\\
+\because \epsilon_{ijk}\sim N(0,\sigma^2),\therefore \overline\epsilon_{i..}\sim N(0,\frac{\sigma^2}{bm}),\ \therefore\frac{\Sigma_{i=1}^aE[(\overline\epsilon_{i..}-\overline \epsilon)^2]}{\frac{\sigma^2}{bm}}\sim\chi^2(a-1),\therefore E[bm\Sigma_{i=1}^a(\overline\epsilon_{i..}-\overline \epsilon)^2]=(a-1)\sigma^2. \\
+\therefore E[SS_A]=(a-1)\sigma^2+bm\Sigma_{i=1}^a\alpha_i^2,\ E[MS_A]=\sigma^2+\frac{bm}{a-1}\Sigma_{i=1}^a\alpha_i^2,\\
+\mbox{同理可得}E[MS_B]=\sigma^2+\frac{am}{b-1}\Sigma_{j=1}^b\beta_j^2. 
+\end{spilt}
+
+    \begin{spilt}
+\\E[SS_E]=E[\Sigma_{i=1}^a\Sigma_{j=1}^b\Sigma_{k=1}^m(y_{ijk}-\overline y_{ij.})^2]\\
+=E[\Sigma_{i=1}^a\Sigma_{j=1}^b\Sigma_{k=1}^m(\epsilon_{ijk}-\overline \epsilon_{ij.})^2]=\Sigma_{i=1}^a\Sigma_{j=1}^bE[\Sigma_{k=1}^m(\epsilon_{ijk}-\overline \epsilon_{ij.})^2]\\
+\because \epsilon_{ijk}\sim N(0,\sigma^2),\frac1{\sigma^2}\Sigma_{k=1}^m(\epsilon_{ijk}-\overline \epsilon_{ij.})^2\sim\chi^2(m-1), \therefore E[\Sigma_{k=1}^m(\epsilon_{ijk}-\overline \epsilon_{ij.})^2]=(m-1)\sigma^2.\\ 
+\therefore E[SS_E]=ab(m-1)\sigma^2=(n-ab)\sigma^2,\ 
+E[MS_E]=E[\frac{SS_E}{df_E}]=\frac1{n-ab}E[SS_E]=\sigma^2.
+\end{spilt}
+
+    \begin{spilt}
+E[SS_{AB}]=E[m\Sigma_{i=1}^a\Sigma_{j=1}^b(\overline y_{ij.}+\overline y-\overline y_{i..}-\overline y_{.j.})^2]=m\Sigma_{i=1}^a\Sigma_{j=1}^bE[(\overline y_{ij.}+\overline y-\overline y_{i..}-\overline y_{.j.})^2]\\
+=m\Sigma_{i=1}^a\Sigma_{j=1}^bE[((\mu_{ij.}+\overline\epsilon_{ij.})+(\mu+\overline\epsilon)-(\mu_{i..}+\overline\epsilon_{i..})-(\mu_{.j.}+\overline\epsilon_{.j.}))^2]\\
+=m\Sigma_{i=1}^a\Sigma_{j=1}^bE[((\alpha\beta)_{ij}+\overline\epsilon_{ij.}+\overline\epsilon-\overline\epsilon_{i..}-\overline\epsilon_{.j.})^2]\\
+=m\Sigma_{i=1}^a\Sigma_{j=1}^bE[(\alpha\beta)_{ij}^2+(\overline\epsilon_{ij.}+\overline\epsilon-\overline\epsilon_{i..}-\overline\epsilon_{.j.})^2+2(\alpha\beta)_{ij}(\overline\epsilon_{ij.}+\overline\epsilon-\overline\epsilon_{i..}-\overline\epsilon_{.j.})]\\
+=m\Sigma_{i=1}^a\Sigma_{j=1}^b(\alpha\beta)_{ij}^2+E[m\Sigma_{i=1}^a\Sigma_{j=1}^b(\overline\epsilon_{ij.}+\overline\epsilon-\overline\epsilon_{i..}-\overline\epsilon_{.j.})^2]+2m\Sigma_{i=1}^a\Sigma_{j=1}^b(\alpha\beta)_{ij}E[\overline\epsilon_{ij.}+\overline\epsilon-\overline\epsilon_{i..}-\overline\epsilon_{.j.}]\\
+=m\Sigma_{i=1}^a\Sigma_{j=1}^b(\alpha\beta)_{ij}^2+E[m\Sigma_{i=1}^a\Sigma_{j=1}^b(\overline\epsilon_{ij.}+\overline\epsilon-\overline\epsilon_{i..}-\overline\epsilon_{.j.})^2]\\
+=m\Sigma_{i=1}^a\Sigma_{j=1}^b(\alpha\beta)_{ij}^2+E[m\Sigma_{i=1}^a\Sigma_{j=1}^b((\overline\epsilon_{ij.}-\overline\epsilon_{i..})-(\overline\epsilon_{.j.}-\overline\epsilon))^2]\\
+\because \epsilon_{ijk}\sim N(0,\sigma^2),\therefore \overline\epsilon_{ij.}\sim N(0,\frac{\sigma^2}m),(\overline\epsilon_{ij.}-\overline\epsilon_{i..})\sim N(0,\frac{\sigma^2}m+\frac{\sigma^2}{bm}),\\
+\therefore\frac{E[\Sigma_{i=1}^a((\overline\epsilon_{ij.}-\overline\epsilon_{i..})-(\overline\epsilon_{.j.}-\overline\epsilon))^2]}{\frac{\sigma^2}m+\frac{\sigma^2}{bm}}\sim\chi^2(a-1),E[\Sigma_{i=1}^a\Sigma_{j=1}^b((\overline\epsilon_{ij.}-\overline\epsilon_{i..})-(\overline\epsilon_{.j.}-\overline\epsilon))^2]=(a-1)(b-1)\sigma^2.\\
+\therefore E[SS_{AB}]=(a-1)(b-1)\sigma^2+m\Sigma_{i=1}^a\Sigma_{j=1}^b(\alpha\beta)_{ij}^2,\\ E[MS_{AB}]=E[\frac{SS_{AB}}{df_{AB}}]=\frac1{(a-1)(b-1)}E[SS_{AB}]=\sigma^2+\frac m{(a-1)(b-1)}\Sigma_{i=1}^a\Sigma_{j=1}^b(\alpha\beta)_{ij}^2.
+\end{spilt}
+
+    綜上所述， \begin{spilt}
+E[MS_A]=\sigma^2+\frac{bm}{a-1}\Sigma_{i=1}^a\alpha_i^2,E[MS_B]=\sigma^2+\frac{am}{b-1}\Sigma_{j=1}^b\beta_j^2. \\
+E[MS_{AB}]=\sigma^2+\frac m{(a-1)(b-1)}\Sigma_{i=1}^a\Sigma_{j=1}^b(\alpha\beta)_{ij}^2,E[MS_E]=\sigma^2.
+\end{spilt}
+
+
+    % Add a bibliography block to the postdoc
+    
+    
+    
+\end{document}
