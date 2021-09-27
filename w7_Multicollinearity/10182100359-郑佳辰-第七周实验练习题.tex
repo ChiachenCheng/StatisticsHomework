@@ -1,0 +1,1119 @@
+%!TEX program = xelatex
+\documentclass[11pt]{ctexart}
+
+    \usepackage[breakable]{tcolorbox}
+    \usepackage{parskip} % Stop auto-indenting (to mimic markdown behaviour)
+    
+    \usepackage{iftex}
+    \ifPDFTeX
+    	\usepackage[T1]{fontenc}
+    	\usepackage{mathpazo}
+    \else
+    	\usepackage{fontspec}
+    \fi
+
+    % Basic figure setup, for now with no caption control since it's done
+    % automatically by Pandoc (which extracts ![](path) syntax from Markdown).
+    \usepackage{graphicx}
+    % Maintain compatibility with old templates. Remove in nbconvert 6.0
+    \let\Oldincludegraphics\includegraphics
+    % Ensure that by default, figures have no caption (until we provide a
+    % proper Figure object with a Caption API and a way to capture that
+    % in the conversion process - todo).
+    \usepackage{caption}
+    \DeclareCaptionFormat{nocaption}{}
+    \captionsetup{format=nocaption,aboveskip=0pt,belowskip=0pt}
+
+    \usepackage{float}
+    \floatplacement{figure}{H} % forces figures to be placed at the correct location
+    \usepackage{xcolor} % Allow colors to be defined
+    \usepackage{enumerate} % Needed for markdown enumerations to work
+    \usepackage{geometry} % Used to adjust the document margins
+    \usepackage{amsmath} % Equations
+    \usepackage{amssymb} % Equations
+    \usepackage{textcomp} % defines textquotesingle
+    % Hack from http://tex.stackexchange.com/a/47451/13684:
+    \AtBeginDocument{%
+        \def\PYZsq{\textquotesingle}% Upright quotes in Pygmentized code
+    }
+    \usepackage{upquote} % Upright quotes for verbatim code
+    \usepackage{eurosym} % defines \euro
+    \usepackage[mathletters]{ucs} % Extended unicode (utf-8) support
+    \usepackage{fancyvrb} % verbatim replacement that allows latex
+    \usepackage{grffile} % extends the file name processing of package graphics 
+                         % to support a larger range
+    \makeatletter % fix for old versions of grffile with XeLaTeX
+    \@ifpackagelater{grffile}{2019/11/01}
+    {
+      % Do nothing on new versions
+    }
+    {
+      \def\Gread@@xetex#1{%
+        \IfFileExists{"\Gin@base".bb}%
+        {\Gread@eps{\Gin@base.bb}}%
+        {\Gread@@xetex@aux#1}%
+      }
+    }
+    \makeatother
+    \usepackage[Export]{adjustbox} % Used to constrain images to a maximum size
+    \adjustboxset{max size={0.9\linewidth}{0.9\paperheight}}
+
+    % The hyperref package gives us a pdf with properly built
+    % internal navigation ('pdf bookmarks' for the table of contents,
+    % internal cross-reference links, web links for URLs, etc.)
+    \usepackage{hyperref}
+    % The default LaTeX title has an obnoxious amount of whitespace. By default,
+    % titling removes some of it. It also provides customization options.
+    \usepackage{titling}
+    \usepackage{longtable} % longtable support required by pandoc >1.10
+    \usepackage{booktabs}  % table support for pandoc > 1.12.2
+    \usepackage[inline]{enumitem} % IRkernel/repr support (it uses the enumerate* environment)
+    \usepackage[normalem]{ulem} % ulem is needed to support strikethroughs (\sout)
+                                % normalem makes italics be italics, not underlines
+    \usepackage{mathrsfs}
+    
+
+    
+    % Colors for the hyperref package
+    \definecolor{urlcolor}{rgb}{0,.145,.698}
+    \definecolor{linkcolor}{rgb}{.71,0.21,0.01}
+    \definecolor{citecolor}{rgb}{.12,.54,.11}
+
+    % ANSI colors
+    \definecolor{ansi-black}{HTML}{3E424D}
+    \definecolor{ansi-black-intense}{HTML}{282C36}
+    \definecolor{ansi-red}{HTML}{E75C58}
+    \definecolor{ansi-red-intense}{HTML}{B22B31}
+    \definecolor{ansi-green}{HTML}{00A250}
+    \definecolor{ansi-green-intense}{HTML}{007427}
+    \definecolor{ansi-yellow}{HTML}{DDB62B}
+    \definecolor{ansi-yellow-intense}{HTML}{B27D12}
+    \definecolor{ansi-blue}{HTML}{208FFB}
+    \definecolor{ansi-blue-intense}{HTML}{0065CA}
+    \definecolor{ansi-magenta}{HTML}{D160C4}
+    \definecolor{ansi-magenta-intense}{HTML}{A03196}
+    \definecolor{ansi-cyan}{HTML}{60C6C8}
+    \definecolor{ansi-cyan-intense}{HTML}{258F8F}
+    \definecolor{ansi-white}{HTML}{C5C1B4}
+    \definecolor{ansi-white-intense}{HTML}{A1A6B2}
+    \definecolor{ansi-default-inverse-fg}{HTML}{FFFFFF}
+    \definecolor{ansi-default-inverse-bg}{HTML}{000000}
+
+    % common color for the border for error outputs.
+    \definecolor{outerrorbackground}{HTML}{FFDFDF}
+
+    % commands and environments needed by pandoc snippets
+    % extracted from the output of `pandoc -s`
+    \providecommand{\tightlist}{%
+      \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+    \DefineVerbatimEnvironment{Highlighting}{Verbatim}{commandchars=\\\{\}}
+    % Add ',fontsize=\small' for more characters per line
+    \newenvironment{Shaded}{}{}
+    \newcommand{\KeywordTok}[1]{\textcolor[rgb]{0.00,0.44,0.13}{\textbf{{#1}}}}
+    \newcommand{\DataTypeTok}[1]{\textcolor[rgb]{0.56,0.13,0.00}{{#1}}}
+    \newcommand{\DecValTok}[1]{\textcolor[rgb]{0.25,0.63,0.44}{{#1}}}
+    \newcommand{\BaseNTok}[1]{\textcolor[rgb]{0.25,0.63,0.44}{{#1}}}
+    \newcommand{\FloatTok}[1]{\textcolor[rgb]{0.25,0.63,0.44}{{#1}}}
+    \newcommand{\CharTok}[1]{\textcolor[rgb]{0.25,0.44,0.63}{{#1}}}
+    \newcommand{\StringTok}[1]{\textcolor[rgb]{0.25,0.44,0.63}{{#1}}}
+    \newcommand{\CommentTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textit{{#1}}}}
+    \newcommand{\OtherTok}[1]{\textcolor[rgb]{0.00,0.44,0.13}{{#1}}}
+    \newcommand{\AlertTok}[1]{\textcolor[rgb]{1.00,0.00,0.00}{\textbf{{#1}}}}
+    \newcommand{\FunctionTok}[1]{\textcolor[rgb]{0.02,0.16,0.49}{{#1}}}
+    \newcommand{\RegionMarkerTok}[1]{{#1}}
+    \newcommand{\ErrorTok}[1]{\textcolor[rgb]{1.00,0.00,0.00}{\textbf{{#1}}}}
+    \newcommand{\NormalTok}[1]{{#1}}
+    
+    % Additional commands for more recent versions of Pandoc
+    \newcommand{\ConstantTok}[1]{\textcolor[rgb]{0.53,0.00,0.00}{{#1}}}
+    \newcommand{\SpecialCharTok}[1]{\textcolor[rgb]{0.25,0.44,0.63}{{#1}}}
+    \newcommand{\VerbatimStringTok}[1]{\textcolor[rgb]{0.25,0.44,0.63}{{#1}}}
+    \newcommand{\SpecialStringTok}[1]{\textcolor[rgb]{0.73,0.40,0.53}{{#1}}}
+    \newcommand{\ImportTok}[1]{{#1}}
+    \newcommand{\DocumentationTok}[1]{\textcolor[rgb]{0.73,0.13,0.13}{\textit{{#1}}}}
+    \newcommand{\AnnotationTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textbf{\textit{{#1}}}}}
+    \newcommand{\CommentVarTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textbf{\textit{{#1}}}}}
+    \newcommand{\VariableTok}[1]{\textcolor[rgb]{0.10,0.09,0.49}{{#1}}}
+    \newcommand{\ControlFlowTok}[1]{\textcolor[rgb]{0.00,0.44,0.13}{\textbf{{#1}}}}
+    \newcommand{\OperatorTok}[1]{\textcolor[rgb]{0.40,0.40,0.40}{{#1}}}
+    \newcommand{\BuiltInTok}[1]{{#1}}
+    \newcommand{\ExtensionTok}[1]{{#1}}
+    \newcommand{\PreprocessorTok}[1]{\textcolor[rgb]{0.74,0.48,0.00}{{#1}}}
+    \newcommand{\AttributeTok}[1]{\textcolor[rgb]{0.49,0.56,0.16}{{#1}}}
+    \newcommand{\InformationTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textbf{\textit{{#1}}}}}
+    \newcommand{\WarningTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textbf{\textit{{#1}}}}}
+    
+    
+    % Define a nice break command that doesn't care if a line doesn't already
+    % exist.
+    \def\br{\hspace*{\fill} \\* }
+    % Math Jax compatibility definitions
+    \def\gt{>}
+    \def\lt{<}
+    \let\Oldtex\TeX
+    \let\Oldlatex\LaTeX
+    \renewcommand{\TeX}{\textrm{\Oldtex}}
+    \renewcommand{\LaTeX}{\textrm{\Oldlatex}}
+    % Document parameters
+    % Document title
+    \title{10182100359-郑佳辰-第七周实验练习题}
+    
+    
+    
+    
+    
+% Pygments definitions
+\makeatletter
+\def\PY@reset{\let\PY@it=\relax \let\PY@bf=\relax%
+    \let\PY@ul=\relax \let\PY@tc=\relax%
+    \let\PY@bc=\relax \let\PY@ff=\relax}
+\def\PY@tok#1{\csname PY@tok@#1\endcsname}
+\def\PY@toks#1+{\ifx\relax#1\empty\else%
+    \PY@tok{#1}\expandafter\PY@toks\fi}
+\def\PY@do#1{\PY@bc{\PY@tc{\PY@ul{%
+    \PY@it{\PY@bf{\PY@ff{#1}}}}}}}
+\def\PY#1#2{\PY@reset\PY@toks#1+\relax+\PY@do{#2}}
+
+\expandafter\def\csname PY@tok@w\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.73,0.73,0.73}{##1}}}
+\expandafter\def\csname PY@tok@c\endcsname{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.25,0.50,0.50}{##1}}}
+\expandafter\def\csname PY@tok@cp\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.74,0.48,0.00}{##1}}}
+\expandafter\def\csname PY@tok@k\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\expandafter\def\csname PY@tok@kp\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\expandafter\def\csname PY@tok@kt\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.69,0.00,0.25}{##1}}}
+\expandafter\def\csname PY@tok@o\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\expandafter\def\csname PY@tok@ow\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.67,0.13,1.00}{##1}}}
+\expandafter\def\csname PY@tok@nb\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\expandafter\def\csname PY@tok@nf\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.00,0.00,1.00}{##1}}}
+\expandafter\def\csname PY@tok@nc\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.00,1.00}{##1}}}
+\expandafter\def\csname PY@tok@nn\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.00,1.00}{##1}}}
+\expandafter\def\csname PY@tok@ne\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.82,0.25,0.23}{##1}}}
+\expandafter\def\csname PY@tok@nv\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.10,0.09,0.49}{##1}}}
+\expandafter\def\csname PY@tok@no\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.53,0.00,0.00}{##1}}}
+\expandafter\def\csname PY@tok@nl\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.63,0.63,0.00}{##1}}}
+\expandafter\def\csname PY@tok@ni\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.60,0.60,0.60}{##1}}}
+\expandafter\def\csname PY@tok@na\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.49,0.56,0.16}{##1}}}
+\expandafter\def\csname PY@tok@nt\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\expandafter\def\csname PY@tok@nd\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.67,0.13,1.00}{##1}}}
+\expandafter\def\csname PY@tok@s\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\expandafter\def\csname PY@tok@sd\endcsname{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\expandafter\def\csname PY@tok@si\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.73,0.40,0.53}{##1}}}
+\expandafter\def\csname PY@tok@se\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.73,0.40,0.13}{##1}}}
+\expandafter\def\csname PY@tok@sr\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.73,0.40,0.53}{##1}}}
+\expandafter\def\csname PY@tok@ss\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.10,0.09,0.49}{##1}}}
+\expandafter\def\csname PY@tok@sx\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\expandafter\def\csname PY@tok@m\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\expandafter\def\csname PY@tok@gh\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.00,0.50}{##1}}}
+\expandafter\def\csname PY@tok@gu\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.50,0.00,0.50}{##1}}}
+\expandafter\def\csname PY@tok@gd\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.63,0.00,0.00}{##1}}}
+\expandafter\def\csname PY@tok@gi\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.00,0.63,0.00}{##1}}}
+\expandafter\def\csname PY@tok@gr\endcsname{\def\PY@tc##1{\textcolor[rgb]{1.00,0.00,0.00}{##1}}}
+\expandafter\def\csname PY@tok@ge\endcsname{\let\PY@it=\textit}
+\expandafter\def\csname PY@tok@gs\endcsname{\let\PY@bf=\textbf}
+\expandafter\def\csname PY@tok@gp\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.00,0.50}{##1}}}
+\expandafter\def\csname PY@tok@go\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.53,0.53,0.53}{##1}}}
+\expandafter\def\csname PY@tok@gt\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.00,0.27,0.87}{##1}}}
+\expandafter\def\csname PY@tok@err\endcsname{\def\PY@bc##1{\setlength{\fboxsep}{0pt}\fcolorbox[rgb]{1.00,0.00,0.00}{1,1,1}{\strut ##1}}}
+\expandafter\def\csname PY@tok@kc\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\expandafter\def\csname PY@tok@kd\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\expandafter\def\csname PY@tok@kn\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\expandafter\def\csname PY@tok@kr\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\expandafter\def\csname PY@tok@bp\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\expandafter\def\csname PY@tok@fm\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.00,0.00,1.00}{##1}}}
+\expandafter\def\csname PY@tok@vc\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.10,0.09,0.49}{##1}}}
+\expandafter\def\csname PY@tok@vg\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.10,0.09,0.49}{##1}}}
+\expandafter\def\csname PY@tok@vi\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.10,0.09,0.49}{##1}}}
+\expandafter\def\csname PY@tok@vm\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.10,0.09,0.49}{##1}}}
+\expandafter\def\csname PY@tok@sa\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\expandafter\def\csname PY@tok@sb\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\expandafter\def\csname PY@tok@sc\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\expandafter\def\csname PY@tok@dl\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\expandafter\def\csname PY@tok@s2\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\expandafter\def\csname PY@tok@sh\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\expandafter\def\csname PY@tok@s1\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\expandafter\def\csname PY@tok@mb\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\expandafter\def\csname PY@tok@mf\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\expandafter\def\csname PY@tok@mh\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\expandafter\def\csname PY@tok@mi\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\expandafter\def\csname PY@tok@il\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\expandafter\def\csname PY@tok@mo\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\expandafter\def\csname PY@tok@ch\endcsname{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.25,0.50,0.50}{##1}}}
+\expandafter\def\csname PY@tok@cm\endcsname{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.25,0.50,0.50}{##1}}}
+\expandafter\def\csname PY@tok@cpf\endcsname{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.25,0.50,0.50}{##1}}}
+\expandafter\def\csname PY@tok@c1\endcsname{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.25,0.50,0.50}{##1}}}
+\expandafter\def\csname PY@tok@cs\endcsname{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.25,0.50,0.50}{##1}}}
+
+\def\PYZbs{\char`\\}
+\def\PYZus{\char`\_}
+\def\PYZob{\char`\{}
+\def\PYZcb{\char`\}}
+\def\PYZca{\char`\^}
+\def\PYZam{\char`\&}
+\def\PYZlt{\char`\<}
+\def\PYZgt{\char`\>}
+\def\PYZsh{\char`\#}
+\def\PYZpc{\char`\%}
+\def\PYZdl{\char`\$}
+\def\PYZhy{\char`\-}
+\def\PYZsq{\char`\'}
+\def\PYZdq{\char`\"}
+\def\PYZti{\char`\~}
+% for compatibility with earlier versions
+\def\PYZat{@}
+\def\PYZlb{[}
+\def\PYZrb{]}
+\makeatother
+
+
+    % For linebreaks inside Verbatim environment from package fancyvrb. 
+    \makeatletter
+        \newbox\Wrappedcontinuationbox 
+        \newbox\Wrappedvisiblespacebox 
+        \newcommand*\Wrappedvisiblespace {\textcolor{red}{\textvisiblespace}} 
+        \newcommand*\Wrappedcontinuationsymbol {\textcolor{red}{\llap{\tiny$\m@th\hookrightarrow$}}} 
+        \newcommand*\Wrappedcontinuationindent {3ex } 
+        \newcommand*\Wrappedafterbreak {\kern\Wrappedcontinuationindent\copy\Wrappedcontinuationbox} 
+        % Take advantage of the already applied Pygments mark-up to insert 
+        % potential linebreaks for TeX processing. 
+        %        {, <, #, %, $, ' and ": go to next line. 
+        %        _, }, ^, &, >, - and ~: stay at end of broken line. 
+        % Use of \textquotesingle for straight quote. 
+        \newcommand*\Wrappedbreaksatspecials {% 
+            \def\PYGZus{\discretionary{\char`\_}{\Wrappedafterbreak}{\char`\_}}% 
+            \def\PYGZob{\discretionary{}{\Wrappedafterbreak\char`\{}{\char`\{}}% 
+            \def\PYGZcb{\discretionary{\char`\}}{\Wrappedafterbreak}{\char`\}}}% 
+            \def\PYGZca{\discretionary{\char`\^}{\Wrappedafterbreak}{\char`\^}}% 
+            \def\PYGZam{\discretionary{\char`\&}{\Wrappedafterbreak}{\char`\&}}% 
+            \def\PYGZlt{\discretionary{}{\Wrappedafterbreak\char`\<}{\char`\<}}% 
+            \def\PYGZgt{\discretionary{\char`\>}{\Wrappedafterbreak}{\char`\>}}% 
+            \def\PYGZsh{\discretionary{}{\Wrappedafterbreak\char`\#}{\char`\#}}% 
+            \def\PYGZpc{\discretionary{}{\Wrappedafterbreak\char`\%}{\char`\%}}% 
+            \def\PYGZdl{\discretionary{}{\Wrappedafterbreak\char`\$}{\char`\$}}% 
+            \def\PYGZhy{\discretionary{\char`\-}{\Wrappedafterbreak}{\char`\-}}% 
+            \def\PYGZsq{\discretionary{}{\Wrappedafterbreak\textquotesingle}{\textquotesingle}}% 
+            \def\PYGZdq{\discretionary{}{\Wrappedafterbreak\char`\"}{\char`\"}}% 
+            \def\PYGZti{\discretionary{\char`\~}{\Wrappedafterbreak}{\char`\~}}% 
+        } 
+        % Some characters . , ; ? ! / are not pygmentized. 
+        % This macro makes them "active" and they will insert potential linebreaks 
+        \newcommand*\Wrappedbreaksatpunct {% 
+            \lccode`\~`\.\lowercase{\def~}{\discretionary{\hbox{\char`\.}}{\Wrappedafterbreak}{\hbox{\char`\.}}}% 
+            \lccode`\~`\,\lowercase{\def~}{\discretionary{\hbox{\char`\,}}{\Wrappedafterbreak}{\hbox{\char`\,}}}% 
+            \lccode`\~`\;\lowercase{\def~}{\discretionary{\hbox{\char`\;}}{\Wrappedafterbreak}{\hbox{\char`\;}}}% 
+            \lccode`\~`\:\lowercase{\def~}{\discretionary{\hbox{\char`\:}}{\Wrappedafterbreak}{\hbox{\char`\:}}}% 
+            \lccode`\~`\?\lowercase{\def~}{\discretionary{\hbox{\char`\?}}{\Wrappedafterbreak}{\hbox{\char`\?}}}% 
+            \lccode`\~`\!\lowercase{\def~}{\discretionary{\hbox{\char`\!}}{\Wrappedafterbreak}{\hbox{\char`\!}}}% 
+            \lccode`\~`\/\lowercase{\def~}{\discretionary{\hbox{\char`\/}}{\Wrappedafterbreak}{\hbox{\char`\/}}}% 
+            \catcode`\.\active
+            \catcode`\,\active 
+            \catcode`\;\active
+            \catcode`\:\active
+            \catcode`\?\active
+            \catcode`\!\active
+            \catcode`\/\active 
+            \lccode`\~`\~ 	
+        }
+    \makeatother
+
+    \let\OriginalVerbatim=\Verbatim
+    \makeatletter
+    \renewcommand{\Verbatim}[1][1]{%
+        %\parskip\z@skip
+        \sbox\Wrappedcontinuationbox {\Wrappedcontinuationsymbol}%
+        \sbox\Wrappedvisiblespacebox {\FV@SetupFont\Wrappedvisiblespace}%
+        \def\FancyVerbFormatLine ##1{\hsize\linewidth
+            \vtop{\raggedright\hyphenpenalty\z@\exhyphenpenalty\z@
+                \doublehyphendemerits\z@\finalhyphendemerits\z@
+                \strut ##1\strut}%
+        }%
+        % If the linebreak is at a space, the latter will be displayed as visible
+        % space at end of first line, and a continuation symbol starts next line.
+        % Stretch/shrink are however usually zero for typewriter font.
+        \def\FV@Space {%
+            \nobreak\hskip\z@ plus\fontdimen3\font minus\fontdimen4\font
+            \discretionary{\copy\Wrappedvisiblespacebox}{\Wrappedafterbreak}
+            {\kern\fontdimen2\font}%
+        }%
+        
+        % Allow breaks at special characters using \PYG... macros.
+        \Wrappedbreaksatspecials
+        % Breaks at punctuation characters . , ; ? ! and / need catcode=\active 	
+        \OriginalVerbatim[#1,codes*=\Wrappedbreaksatpunct]%
+    }
+    \makeatother
+
+    % Exact colors from NB
+    \definecolor{incolor}{HTML}{303F9F}
+    \definecolor{outcolor}{HTML}{D84315}
+    \definecolor{cellborder}{HTML}{CFCFCF}
+    \definecolor{cellbackground}{HTML}{F7F7F7}
+    
+    % prompt
+    \makeatletter
+    \newcommand{\boxspacing}{\kern\kvtcb@left@rule\kern\kvtcb@boxsep}
+    \makeatother
+    \newcommand{\prompt}[4]{
+        {\ttfamily\llap{{\color{#2}[#3]:\hspace{3pt}#4}}\vspace{-\baselineskip}}
+    }
+    
+
+    
+    % Prevent overflowing lines due to hard-to-break entities
+    \sloppy 
+    % Setup hyperref package
+    \hypersetup{
+      breaklinks=true,  % so long urls are correctly broken across lines
+      colorlinks=true,
+      urlcolor=urlcolor,
+      linkcolor=linkcolor,
+      citecolor=citecolor,
+      }
+    % Slightly bigger margins than the latex defaults
+    
+    \geometry{verbose,tmargin=1in,bmargin=1in,lmargin=1in,rmargin=1in}
+    
+    
+
+\begin{document}
+    
+    \maketitle
+    
+    
+
+    
+    \hypertarget{week7-multicollinearity}{%
+\section{Week7 Multicollinearity}\label{week7-multicollinearity}}
+
+\hypertarget{ux80ccux666fux63cfux8ff0}{%
+\subsection{背景描述}\label{ux80ccux666fux63cfux8ff0}}
+
+资产评估：科学的大众评估是将线性回归方法应用于资产评估问题的一种技术。科学大规模评估的目的是根据选定的建筑物的物理特性和对建筑物支付的税费(地方、学校、县)预测房屋的销售价格。这些数据最初是由Narula和Wellington(1977)提出的，我们观察
+24 个观测值。
+
+由此我们构造了 24 个观测的 9 个变量，具体请见下表：
+
+\hypertarget{ux6570ux636eux63cfux8ff0}{%
+\subsection{数据描述}\label{ux6570ux636eux63cfux8ff0}}
+
+\begin{longtable}[]{llll}
+\toprule
+变量名 & 变量含义 & 变量类型 & 变量取值范围 \\
+\midrule
+\endhead
+（自变量）X1 & 数千美元税收(当地，县，学校) & continuous variable &
+\(\mathbb{R}^+\) \\
+（自变量）X2 & 浴室的数量 & continuous variable & \(\mathbb{R}^+\) \\
+（自变量）X3 & 批量(千平方英尺) & continuous variable &
+\(\mathbb{R}^+\) \\
+（自变量）X4 & 居住面积(千平方英尺) & continuous variable &
+\(\mathbb{R}^+\) \\
+（自变量）X5 & 车库档位数量 & continuous variable & \(\mathbb{R}^+\) \\
+（自变量）X6 & 房间的数量 & continuous variable & \(\mathbb{R}^+\) \\
+（自变量）X7 & 卧室的数量 & continuous variable & \(\mathbb{R}^+\) \\
+（自变量）X8 & 住宅年龄(年) & continuous variable & \(\mathbb{R}^+\) \\
+（自变量）X9 & 壁炉的数量 & continuous variable & \(\mathbb{R}^+\) \\
+（因变量）Y & 数千美元房子的售价 & continuous variable &
+\(\mathbb{R}^+\) \\
+\bottomrule
+\end{longtable}
+
+    \hypertarget{ux95eeux9898}{%
+\subsection{问题}\label{ux95eeux9898}}
+
+注：这里使用 \(\alpha\)=0.05 的显著性水平
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\tightlist
+\item
+  判断变量间是否具有多重共线性.
+\item
+  如果存在多重共线性，如何消除多重共线性/选择变量.
+\end{enumerate}
+
+\hypertarget{ux89e3ux51b3ux65b9ux6848}{%
+\subsection{解决方案}\label{ux89e3ux51b3ux65b9ux6848}}
+
+    \textbf{Q1：}
+
+多重共线性是指自变量\(x_1, x_2, ... ,x_p\)之间不完全线性相关但是相关性很高的情况。此时，虽然可以得到最小二乘估计，但是精度很低。随着自变量之间相关性增加，最小二乘估计结果的方差会增大。
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{1}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{c+c1}{\PYZsh{} Import standard packages}
+\PY{k+kn}{import} \PY{n+nn}{numpy} \PY{k}{as} \PY{n+nn}{np}
+\PY{k+kn}{import} \PY{n+nn}{pandas} \PY{k}{as} \PY{n+nn}{pd}
+\PY{k+kn}{import} \PY{n+nn}{scipy}\PY{n+nn}{.}\PY{n+nn}{stats} \PY{k}{as} \PY{n+nn}{stats}
+\PY{k+kn}{import} \PY{n+nn}{matplotlib}\PY{n+nn}{.}\PY{n+nn}{pyplot} \PY{k}{as} \PY{n+nn}{plt}
+\PY{k+kn}{import} \PY{n+nn}{math}
+
+\PY{c+c1}{\PYZsh{} Import additional packages}
+\PY{k+kn}{from} \PY{n+nn}{itertools} \PY{k+kn}{import} \PY{n}{combinations}
+\PY{k+kn}{import} \PY{n+nn}{statsmodels}\PY{n+nn}{.}\PY{n+nn}{api} \PY{k}{as} \PY{n+nn}{sm}
+\PY{k+kn}{from} \PY{n+nn}{statsmodels}\PY{n+nn}{.}\PY{n+nn}{stats}\PY{n+nn}{.}\PY{n+nn}{outliers\PYZus{}influence} \PY{k+kn}{import} \PY{n}{variance\PYZus{}inflation\PYZus{}factor}
+
+\PY{n}{alpha} \PY{o}{=} \PY{l+m+mf}{0.05}
+\PY{n}{p} \PY{o}{=} \PY{l+m+mi}{9}
+\PY{n}{n} \PY{o}{=} \PY{l+m+mi}{24}
+
+\PY{n}{x} \PY{o}{=} \PY{n}{pd}\PY{o}{.}\PY{n}{read\PYZus{}csv}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Project7.csv}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+\PY{n}{x}\PY{o}{.}\PY{n}{insert}\PY{p}{(}\PY{l+m+mi}{0}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{intercept}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{np}\PY{o}{.}\PY{n}{ones}\PY{p}{(}\PY{n+nb}{len}\PY{p}{(}\PY{n}{x}\PY{p}{)}\PY{p}{)}\PY{p}{)} 
+\PY{n}{data} \PY{o}{=} \PY{n}{x}\PY{o}{.}\PY{n}{values} \PY{o}{*} \PY{l+m+mi}{1}
+\PY{n}{df} \PY{o}{=} \PY{n}{pd}\PY{o}{.}\PY{n}{DataFrame}\PY{p}{(}\PY{n}{data}\PY{p}{)}
+\PY{n+nb}{print}\PY{p}{(}\PY{n}{df}\PY{p}{)}
+
+\PY{n}{X} \PY{o}{=} \PY{n}{data}\PY{p}{[}\PY{p}{:}\PY{p}{,}\PY{l+m+mi}{0}\PY{p}{:}\PY{n}{p}\PY{o}{+}\PY{l+m+mi}{1}\PY{p}{]}
+\PY{n}{Y} \PY{o}{=} \PY{n}{data}\PY{p}{[}\PY{p}{:}\PY{p}{,}\PY{o}{\PYZhy{}}\PY{l+m+mi}{1}\PY{p}{]}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+     0      1    2      3      4    5    6    7     8    9     10
+0   1.0  4.918  1.0  3.472  0.998  1.0  7.0  4.0  42.0  0.0  25.9
+1   1.0  5.021  1.0  3.531  1.500  2.0  7.0  4.0  62.0  0.0  29.5
+2   1.0  4.543  1.0  2.275  1.175  1.0  6.0  3.0  40.0  0.0  27.9
+3   1.0  4.557  1.0  4.050  1.232  1.0  6.0  3.0  54.0  0.0  25.9
+4   1.0  5.060  1.0  4.455  1.121  1.0  6.0  3.0  42.0  0.0  29.9
+5   1.0  3.891  1.0  4.455  0.988  1.0  6.0  3.0  56.0  0.0  29.9
+6   1.0  5.898  1.0  5.850  1.240  1.0  7.0  3.0  51.0  1.0  30.9
+7   1.0  5.604  1.0  9.520  1.501  0.0  6.0  3.0  32.0  0.0  28.9
+8   1.0  5.828  1.0  6.435  1.225  2.0  6.0  3.0  32.0  0.0  35.9
+9   1.0  5.300  1.0  4.988  1.552  1.0  6.0  3.0  30.0  0.0  31.5
+10  1.0  6.271  1.0  5.520  0.975  1.0  5.0  2.0  30.0  0.0  31.0
+11  1.0  5.959  1.0  6.666  1.121  2.0  6.0  3.0  32.0  0.0  30.9
+12  1.0  5.050  1.0  5.000  1.020  0.0  5.0  2.0  46.0  1.0  30.0
+13  1.0  8.246  1.5  5.150  1.664  2.0  8.0  4.0  50.0  0.0  36.9
+14  1.0  6.697  1.5  6.902  1.488  1.5  7.0  3.0  22.0  1.0  41.9
+15  1.0  7.784  1.5  7.102  1.376  1.0  6.0  3.0  17.0  0.0  40.5
+16  1.0  9.038  1.0  7.800  1.500  1.5  7.0  3.0  23.0  0.0  43.9
+17  1.0  5.989  1.0  5.520  1.256  2.0  6.0  3.0  40.0  1.0  37.9
+18  1.0  7.542  1.5  5.000  1.690  1.0  6.0  3.0  22.0  0.0  37.9
+19  1.0  8.795  1.5  9.890  1.820  2.0  8.0  4.0  50.0  1.0  44.5
+20  1.0  6.083  1.5  6.727  1.652  1.0  6.0  3.0  44.0  0.0  37.9
+21  1.0  8.361  1.5  9.150  1.777  2.0  8.0  4.0  48.0  1.0  38.9
+22  1.0  8.140  1.0  8.000  1.504  2.0  7.0  3.0   3.0  0.0  36.9
+23  1.0  9.142  1.5  7.326  1.831  1.5  8.0  4.0  31.0  0.0  45.8
+    \end{Verbatim}
+
+    \textbf{数据预处理：}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{2}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{c+c1}{\PYZsh{} 对自变量 X 进行标准化}
+\PY{c+c1}{\PYZsh{} 自变量 X 的均值}
+\PY{n}{X\PYZus{}mean} \PY{o}{=} \PY{p}{[}\PY{p}{]}
+\PY{k}{for} \PY{n}{i} \PY{o+ow}{in} \PY{n+nb}{range}\PY{p}{(}\PY{n}{p}\PY{p}{)}\PY{p}{:}
+    \PY{n}{X\PYZus{}mean}\PY{o}{.}\PY{n}{append}\PY{p}{(}\PY{n}{np}\PY{o}{.}\PY{n}{mean}\PY{p}{(}\PY{n}{X}\PY{p}{[}\PY{p}{:}\PY{p}{,} \PY{n}{i}\PY{o}{+}\PY{l+m+mi}{1}\PY{p}{]}\PY{p}{)}\PY{p}{)} 
+
+\PY{c+c1}{\PYZsh{} 自变量 X 的标准差}
+\PY{n}{X\PYZus{}L} \PY{o}{=} \PY{p}{[}\PY{p}{]}
+\PY{k}{for} \PY{n}{i} \PY{o+ow}{in} \PY{n+nb}{range}\PY{p}{(}\PY{n}{p}\PY{p}{)}\PY{p}{:}
+    \PY{n}{X\PYZus{}L}\PY{o}{.}\PY{n}{append}\PY{p}{(}\PY{n+nb}{sum}\PY{p}{(}\PY{p}{(}\PY{n}{X}\PY{p}{[}\PY{p}{:}\PY{p}{,} \PY{n}{i}\PY{o}{+}\PY{l+m+mi}{1}\PY{p}{]} \PY{o}{\PYZhy{}} \PY{n}{X\PYZus{}mean}\PY{p}{[}\PY{n}{i}\PY{p}{]}\PY{p}{)} \PY{o}{*}\PY{o}{*} \PY{l+m+mi}{2}\PY{p}{)}\PY{p}{)}  
+
+\PY{c+c1}{\PYZsh{} 对自变量 X 标准化(截距项不用标准化)}
+\PY{n}{X\PYZus{}std} \PY{o}{=} \PY{n}{X} \PY{o}{*} \PY{l+m+mf}{1.0}
+\PY{n}{X\PYZus{}std}\PY{p}{[}\PY{p}{:}\PY{p}{,}\PY{l+m+mi}{1}\PY{p}{:}\PY{n}{p}\PY{o}{+}\PY{l+m+mi}{1}\PY{p}{]} \PY{o}{=} \PY{p}{(}\PY{n}{X}\PY{p}{[}\PY{p}{:}\PY{p}{,}\PY{l+m+mi}{1}\PY{p}{:}\PY{n}{p}\PY{o}{+}\PY{l+m+mi}{1}\PY{p}{]} \PY{o}{\PYZhy{}} \PY{n}{X\PYZus{}mean}\PY{p}{)} \PY{o}{/} \PY{n}{np}\PY{o}{.}\PY{n}{sqrt}\PY{p}{(}\PY{n}{X\PYZus{}L}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \textbf{做多元线性回归分析}
+
+先后对未经标准化和已标准化的数据进行回归分析，得到的\(\hat{\beta}\)分别如表所示。
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{3}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{c+c1}{\PYZsh{} Do the multiple linear regression}
+\PY{c+c1}{\PYZsh{} OLS（endog,exog=None,missing=\PYZsq{}none\PYZsq{},hasconst=None) (endog:因变量，exog=自变量）}
+\PY{n}{model} \PY{o}{=} \PY{n}{sm}\PY{o}{.}\PY{n}{OLS}\PY{p}{(}\PY{n}{Y}\PY{p}{,} \PY{n}{X}\PY{p}{)}\PY{o}{.}\PY{n}{fit}\PY{p}{(}\PY{p}{)}
+\PY{n}{Y\PYZus{}hat} \PY{o}{=} \PY{n}{model}\PY{o}{.}\PY{n}{fittedvalues}
+\PY{n}{model}\PY{o}{.}\PY{n}{summary}\PY{p}{(}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+            \begin{tcolorbox}[breakable, size=fbox, boxrule=.5pt, pad at break*=1mm, opacityfill=0]
+\prompt{Out}{outcolor}{3}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+<class 'statsmodels.iolib.summary.Summary'>
+"""
+                            OLS Regression Results
+==============================================================================
+Dep. Variable:                      y   R-squared:                       0.851
+Model:                            OLS   Adj. R-squared:                  0.756
+Method:                 Least Squares   F-statistic:                     8.898
+Date:                Thu, 15 Apr 2021   Prob (F-statistic):           0.000202
+Time:                        22:31:15   Log-Likelihood:                -53.735
+No. Observations:                  24   AIC:                             127.5
+Df Residuals:                      14   BIC:                             139.3
+Df Model:                           9
+Covariance Type:            nonrobust
+==============================================================================
+                 coef    std err          t      P>|t|      [0.025      0.975]
+------------------------------------------------------------------------------
+const         15.3104      5.961      2.568      0.022       2.526      28.095
+x1             1.9541      1.038      1.882      0.081      -0.273       4.181
+x2             6.8455      4.335      1.579      0.137      -2.453      16.144
+x3             0.1376      0.494      0.278      0.785      -0.923       1.198
+x4             2.7814      4.395      0.633      0.537      -6.645      12.207
+x5             2.0508      1.385      1.481      0.161      -0.919       5.020
+x6            -0.5559      2.398     -0.232      0.820      -5.699       4.587
+x7            -1.2452      3.423     -0.364      0.721      -8.587       6.096
+x8            -0.0380      0.067     -0.565      0.581      -0.182       0.106
+x9             1.7045      1.953      0.873      0.398      -2.485       5.894
+==============================================================================
+Omnibus:                        1.516   Durbin-Watson:                   1.857
+Prob(Omnibus):                  0.469   Jarque-Bera (JB):                1.100
+Skew:                           0.262   Prob(JB):                        0.577
+Kurtosis:                       2.091   Cond. No.                         470.
+==============================================================================
+
+Notes:
+[1] Standard Errors assume that the covariance matrix of the errors is correctly
+specified.
+"""
+\end{Verbatim}
+\end{tcolorbox}
+        
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{4}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{c+c1}{\PYZsh{} Do the multiple linear regression}
+\PY{c+c1}{\PYZsh{} OLS（endog,exog=None,missing=\PYZsq{}none\PYZsq{},hasconst=None) (endog:因变量，exog=自变量）}
+\PY{n}{model\PYZus{}std} \PY{o}{=} \PY{n}{sm}\PY{o}{.}\PY{n}{OLS}\PY{p}{(}\PY{n}{Y}\PY{p}{,} \PY{n}{X\PYZus{}std}\PY{p}{)}\PY{o}{.}\PY{n}{fit}\PY{p}{(}\PY{p}{)}
+\PY{n}{Y\PYZus{}std\PYZus{}hat} \PY{o}{=} \PY{n}{model\PYZus{}std}\PY{o}{.}\PY{n}{fittedvalues}
+\PY{n}{model\PYZus{}std}\PY{o}{.}\PY{n}{summary}\PY{p}{(}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+            \begin{tcolorbox}[breakable, size=fbox, boxrule=.5pt, pad at break*=1mm, opacityfill=0]
+\prompt{Out}{outcolor}{4}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+<class 'statsmodels.iolib.summary.Summary'>
+"""
+                            OLS Regression Results
+==============================================================================
+Dep. Variable:                      y   R-squared:                       0.851
+Model:                            OLS   Adj. R-squared:                  0.756
+Method:                 Least Squares   F-statistic:                     8.898
+Date:                Thu, 15 Apr 2021   Prob (F-statistic):           0.000202
+Time:                        22:31:15   Log-Likelihood:                -53.735
+No. Observations:                  24   AIC:                             127.5
+Df Residuals:                      14   BIC:                             139.3
+Df Model:                           9
+Covariance Type:            nonrobust
+==============================================================================
+                 coef    std err          t      P>|t|      [0.025      0.975]
+------------------------------------------------------------------------------
+const         34.6292      0.607     57.065      0.000      33.328      35.931
+x1            14.8258      7.878      1.882      0.081      -2.070      31.722
+x2             7.9045      5.006      1.579      0.137      -2.832      18.641
+x3             1.2966      4.658      0.278      0.785      -8.694      11.287
+x4             3.6852      5.823      0.633      0.537      -8.803      16.174
+x5             5.9459      4.014      1.481      0.161      -2.664      14.556
+x6            -2.3585     10.173     -0.232      0.820     -24.178      19.461
+x7            -3.3719      9.269     -0.364      0.721     -23.253      16.509
+x8            -2.5590      4.529     -0.565      0.581     -12.273       7.155
+x9             3.6157      4.143      0.873      0.398      -5.271      12.502
+==============================================================================
+Omnibus:                        1.516   Durbin-Watson:                   1.857
+Prob(Omnibus):                  0.469   Jarque-Bera (JB):                1.100
+Skew:                           0.262   Prob(JB):                        0.577
+Kurtosis:                       2.091   Cond. No.                         23.7
+==============================================================================
+
+Notes:
+[1] Standard Errors assume that the covariance matrix of the errors is correctly
+specified.
+"""
+\end{Verbatim}
+\end{tcolorbox}
+        
+    \textbf{预判变量间是否存在多重共线性}
+
+判断变量间是否存在多重共线性可以使用相关系数进行直观判定，也可以采用方差扩大因子法或特征值判定法。
+
+    \textbf{方法1： 直观判定法}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{5}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{c+c1}{\PYZsh{} 相关系数}
+\PY{n}{r} \PY{o}{=} \PY{n}{df}\PY{o}{.}\PY{n}{corr}\PY{p}{(}\PY{p}{)}
+\PY{n}{r}
+\end{Verbatim}
+\end{tcolorbox}
+
+            \begin{tcolorbox}[breakable, size=fbox, boxrule=.5pt, pad at break*=1mm, opacityfill=0]
+\prompt{Out}{outcolor}{5}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+    0         1         2         3         4         5         6   \textbackslash{}
+0  NaN       NaN       NaN       NaN       NaN       NaN       NaN
+1  NaN  1.000000  0.651267  0.689212  0.734274  0.458556  0.640616
+2  NaN  0.651267  1.000000  0.412956  0.728592  0.224022  0.510310
+3  NaN  0.689212  0.412956  1.000000  0.571552  0.204664  0.392124
+4  NaN  0.734274  0.728592  0.571552  1.000000  0.358884  0.678861
+5  NaN  0.458556  0.224022  0.204664  0.358884  1.000000  0.589387
+6  NaN  0.640616  0.510310  0.392124  0.678861  0.589387  1.000000
+7  NaN  0.367113  0.426401  0.151609  0.574335  0.541299  0.870388
+8  NaN -0.437101 -0.100748 -0.352751 -0.139087 -0.020169  0.124266
+9  NaN  0.146683  0.204124  0.305995  0.106561  0.101618  0.222222
+10 NaN  0.873912  0.709777  0.647636  0.707766  0.461468  0.528444
+
+              7         8             9         10
+0            NaN       NaN           NaN       NaN
+1   3.671126e-01 -0.437101  1.466825e-01  0.873912
+2   4.264014e-01 -0.100748  2.041241e-01  0.709777
+3   1.516093e-01 -0.352751  3.059946e-01  0.647636
+4   5.743353e-01 -0.139087  1.065612e-01  0.707766
+5   5.412988e-01 -0.020169  1.016185e-01  0.461468
+6   8.703883e-01  0.124266  2.222222e-01  0.528444
+7   1.000000e+00  0.313511 -5.797951e-17  0.281520
+8   3.135114e-01  1.000000  2.257796e-01 -0.397403
+9  -5.797951e-17  0.225780  1.000000e+00  0.266878
+10  2.815200e-01 -0.397403  2.668783e-01  1.000000
+\end{Verbatim}
+\end{tcolorbox}
+        
+    \begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\tightlist
+\item
+  当与因变量之间的简单相关系数绝对值很大的自变量在回归方程中没有通过显著性检验时，可初步判断存在严重的多重共线性。
+\end{enumerate}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{6}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{r\PYZus{}xy} \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{array}\PY{p}{(}\PY{n}{r}\PY{o}{.}\PY{n}{iloc}\PY{p}{[}\PY{l+m+mi}{1}\PY{p}{:}\PY{n}{p}\PY{o}{+}\PY{l+m+mi}{1}\PY{p}{]}\PY{p}{[}\PY{n}{p}\PY{o}{+}\PY{l+m+mi}{1}\PY{p}{]}\PY{p}{)}
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{因变量和每个自变量之间的相关系数: }\PY{l+s+se}{\PYZbs{}n}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{r\PYZus{}xy}\PY{p}{)}
+
+\PY{n}{judge\PYZus{}xy} \PY{o}{=} \PY{k+kc}{True}
+\PY{k}{for} \PY{n}{i} \PY{o+ow}{in} \PY{n+nb}{range}\PY{p}{(}\PY{n}{p}\PY{p}{)}\PY{p}{:}
+    \PY{k}{if} \PY{p}{(}\PY{n+nb}{abs}\PY{p}{(}\PY{n}{r\PYZus{}xy}\PY{p}{[}\PY{n}{i}\PY{p}{]}\PY{p}{)} \PY{o}{\PYZgt{}}\PY{o}{=} \PY{l+m+mf}{0.5}\PY{p}{)} \PY{o}{\PYZam{}} \PY{p}{(}\PY{n}{model\PYZus{}std}\PY{o}{.}\PY{n}{pvalues}\PY{p}{[}\PY{n}{i}\PY{o}{+}\PY{l+m+mi}{1}\PY{p}{]} \PY{o}{\PYZgt{}}\PY{o}{=} \PY{n}{alpha}\PY{p}{)}\PY{p}{:}
+        \PY{n}{judge\PYZus{}xy} \PY{o}{=} \PY{k+kc}{False}
+        \PY{n+nb}{print}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{自变量 }\PY{l+s+si}{\PYZpc{}d}\PY{l+s+s1}{ 与因变量之间的简单相关系数为: }\PY{l+s+si}{\PYZpc{}.4f}\PY{l+s+s1}{, tPal: }\PY{l+s+si}{\PYZpc{}.4f}\PY{l+s+s1}{.}\PY{l+s+s1}{\PYZsq{}} \PY{o}{\PYZpc{}} \PY{p}{(}\PY{n}{i}\PY{o}{+}\PY{l+m+mi}{1}\PY{p}{,} \PY{n}{r\PYZus{}xy}\PY{p}{[}\PY{n}{i}\PY{p}{]}\PY{p}{,} \PY{n}{model\PYZus{}std}\PY{o}{.}\PY{n}{pvalues}\PY{p}{[}\PY{n}{i}\PY{o}{+}\PY{l+m+mi}{1}\PY{p}{]}\PY{p}{)}\PY{p}{)}
+        
+\PY{k}{if} \PY{n}{judge\PYZus{}xy}\PY{p}{:}
+    \PY{n+nb}{print}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+se}{\PYZbs{}n}\PY{l+s+s1}{自变量之间不存在多重共线性。}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+\PY{k}{else}\PY{p}{:}
+    \PY{n+nb}{print}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+se}{\PYZbs{}n}\PY{l+s+s1}{自变量之间存在多重共线性。}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+因变量和每个自变量之间的相关系数:
+ [ 0.87391169  0.7097771   0.64763642  0.70776562  0.46146792  0.52844361
+  0.28151997 -0.39740338  0.26687833]
+自变量 1 与因变量之间的简单相关系数为: 0.8739, tPal: 0.0808.
+自变量 2 与因变量之间的简单相关系数为: 0.7098, tPal: 0.1367.
+自变量 3 与因变量之间的简单相关系数为: 0.6476, tPal: 0.7848.
+自变量 4 与因变量之间的简单相关系数为: 0.7078, tPal: 0.5370.
+自变量 6 与因变量之间的简单相关系数为: 0.5284, tPal: 0.8200.
+
+自变量之间存在多重共线性。
+    \end{Verbatim}
+
+    \begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\setcounter{enumi}{1}
+\tightlist
+\item
+  在自变量的相关矩阵中，当自变量间的相关系数较大时会出现多重共线性的问题。
+\end{enumerate}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{7}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{judge\PYZus{}xx} \PY{o}{=} \PY{k+kc}{True}
+\PY{k}{for} \PY{p}{(}\PY{n}{i}\PY{p}{,} \PY{n}{j}\PY{p}{)} \PY{o+ow}{in} \PY{n}{combinations}\PY{p}{(}\PY{n+nb}{range}\PY{p}{(}\PY{l+m+mi}{1}\PY{p}{,} \PY{n}{p}\PY{o}{+}\PY{l+m+mi}{1}\PY{p}{)}\PY{p}{,} \PY{l+m+mi}{2}\PY{p}{)}\PY{p}{:}
+    \PY{k}{if}\PY{p}{(}\PY{n}{r}\PY{o}{.}\PY{n}{iloc}\PY{p}{[}\PY{n}{i}\PY{p}{]}\PY{p}{[}\PY{n}{j}\PY{p}{]} \PY{o}{\PYZgt{}}\PY{o}{=} \PY{l+m+mf}{0.7}\PY{p}{)}\PY{p}{:}
+        \PY{n}{judge\PYZus{}xx} \PY{o}{=} \PY{k+kc}{False}
+        \PY{n+nb}{print}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{变量(}\PY{l+s+si}{\PYZpc{}d}\PY{l+s+s1}{,}\PY{l+s+si}{\PYZpc{}d}\PY{l+s+s1}{)之间相关系数较大，为：}\PY{l+s+si}{\PYZpc{}.4f}\PY{l+s+s1}{\PYZsq{}}\PY{o}{\PYZpc{}} \PY{p}{(}\PY{n}{i}\PY{p}{,} \PY{n}{j}\PY{p}{,} \PY{n}{r}\PY{o}{.}\PY{n}{iloc}\PY{p}{[}\PY{n}{i}\PY{p}{]}\PY{p}{[}\PY{n}{j}\PY{p}{]}\PY{p}{)}\PY{p}{)}
+        
+\PY{k}{if} \PY{n}{judge\PYZus{}xx}\PY{p}{:}
+    \PY{n+nb}{print}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+se}{\PYZbs{}n}\PY{l+s+s1}{自变量之间不存在多重共线性。}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+\PY{k}{else}\PY{p}{:}
+    \PY{n+nb}{print}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+se}{\PYZbs{}n}\PY{l+s+s1}{自变量之间存在多重共线性。}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+变量(1,4)之间相关系数较大，为：0.7343
+变量(2,4)之间相关系数较大，为：0.7286
+变量(6,7)之间相关系数较大，为：0.8704
+
+自变量之间存在多重共线性。
+    \end{Verbatim}
+
+    可以看出，自变量1、2、3、4、6与因变量之间的相关系数高且没有通过显著性检验，且变量(1,4)、(2,4)、(6,7)之间的相关系数较大，这说明自变量之间存在多重共线性。
+
+    \textbf{方法2：方差扩大因子法}\\
+1. 计算自变量 \(x_j\) 的方差扩大因子
+\(\mathsf{VIF_j}\)，\(j=1,\cdots,p\).
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{8}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{c+c1}{\PYZsh{} 法1：}
+\PY{n}{c} \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{dot}\PY{p}{(}\PY{n}{X\PYZus{}std}\PY{o}{.}\PY{n}{T}\PY{p}{,} \PY{n}{X\PYZus{}std}\PY{p}{)}
+\PY{n}{C} \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{linalg}\PY{o}{.}\PY{n}{inv}\PY{p}{(}\PY{n}{c}\PY{p}{)}  \PY{c+c1}{\PYZsh{} 求逆}
+\PY{n}{C\PYZus{}list} \PY{o}{=} \PY{p}{[}\PY{p}{]}
+\PY{k}{for} \PY{n}{i} \PY{o+ow}{in} \PY{n+nb}{range}\PY{p}{(}\PY{n}{p}\PY{p}{)}\PY{p}{:}
+    \PY{n}{C\PYZus{}list}\PY{o}{.}\PY{n}{append}\PY{p}{(}\PY{n}{C}\PY{p}{[}\PY{n}{i} \PY{o}{+} \PY{l+m+mi}{1}\PY{p}{]}\PY{p}{[}\PY{n}{i} \PY{o}{+} \PY{l+m+mi}{1}\PY{p}{]}\PY{p}{)}
+
+\PY{c+c1}{\PYZsh{} 法2：}
+\PY{n}{vif} \PY{o}{=} \PY{p}{[}\PY{n}{variance\PYZus{}inflation\PYZus{}factor}\PY{p}{(}\PY{n}{X\PYZus{}std}\PY{p}{[}\PY{p}{:}\PY{p}{,}\PY{l+m+mi}{1}\PY{p}{:}\PY{n}{p} \PY{o}{+} \PY{l+m+mi}{1}\PY{p}{]}\PY{p}{,} \PY{n}{i}\PY{p}{)} \PY{k}{for} \PY{n}{i} \PY{o+ow}{in} \PY{n+nb}{range}\PY{p}{(}\PY{n}{p}\PY{p}{)}\PY{p}{]}
+
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{C主对角线元素  方差扩大因子：}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+\PY{k}{for} \PY{n}{i} \PY{o+ow}{in} \PY{n+nb}{range}\PY{p}{(}\PY{n}{p}\PY{p}{)}\PY{p}{:}
+    \PY{n+nb}{print}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+si}{\PYZpc{}d}\PY{l+s+s1}{. }\PY{l+s+si}{\PYZpc{}.4f}\PY{l+s+s1}{        }\PY{l+s+si}{\PYZpc{}.4f}\PY{l+s+s1}{\PYZsq{}} \PY{o}{\PYZpc{}} \PY{p}{(}\PY{n}{i}\PY{o}{+}\PY{l+m+mi}{1}\PY{p}{,} \PY{n}{C\PYZus{}list}\PY{p}{[}\PY{n}{i}\PY{p}{]}\PY{p}{,} \PY{n}{vif}\PY{p}{[}\PY{n}{i}\PY{p}{]}\PY{p}{)}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+C主对角线元素  方差扩大因子：
+1. 7.0219        7.0219
+2. 2.8355        2.8355
+3. 2.4549        2.4549
+4. 3.8363        3.8363
+5. 1.8234        1.8234
+6. 11.7109        11.7109
+7. 9.7218        9.7218
+8. 2.3211        2.3211
+9. 1.9424        1.9424
+    \end{Verbatim}
+
+    \begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\setcounter{enumi}{1}
+\tightlist
+\item
+  通过 \(\mathsf{VIF_j}\) 的大小判断自变量之间是否存在多重共线性.\\
+  如果VIF值大于10说明共线性很严重，这种情况需要处理，如果VIF值在5以下不需要处理，如果VIF介于5\textasciitilde10之间视情况而定。
+\end{enumerate}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{9}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{thres\PYZus{}vif} \PY{o}{=} \PY{l+m+mi}{5}
+\PY{k}{for} \PY{n}{i} \PY{o+ow}{in} \PY{n+nb}{range}\PY{p}{(}\PY{n}{p}\PY{p}{)}\PY{p}{:}
+    \PY{k}{if} \PY{n}{vif}\PY{p}{[}\PY{n}{i}\PY{p}{]} \PY{o}{\PYZgt{}}\PY{o}{=} \PY{n}{thres\PYZus{}vif}\PY{p}{:}
+        \PY{n+nb}{print}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{自变量 x}\PY{l+s+si}{\PYZpc{}d}\PY{l+s+s1}{ 与其余自变量之间存在多重共线性，其中VIF值为：}\PY{l+s+si}{\PYZpc{}.4f}\PY{l+s+s1}{\PYZsq{}} \PY{o}{\PYZpc{}} \PY{p}{(}\PY{n}{i} \PY{o}{+} \PY{l+m+mi}{1}\PY{p}{,} \PY{n}{vif}\PY{p}{[}\PY{n}{i}\PY{p}{]}\PY{p}{)}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+自变量 x1 与其余自变量之间存在多重共线性，其中VIF值为：7.0219
+自变量 x6 与其余自变量之间存在多重共线性，其中VIF值为：11.7109
+自变量 x7 与其余自变量之间存在多重共线性，其中VIF值为：9.7218
+    \end{Verbatim}
+
+    \textbf{方法3：特征值判定法}\\
+1. 计算自变量 \(x_j\) 的条件数
+\(\kappa_j = \sqrt{\frac{\lambda_1}{\lambda_j}}\)，\(j=1,\cdots,p\).
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{10}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{corr} \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{corrcoef}\PY{p}{(}\PY{n}{X\PYZus{}std}\PY{p}{[}\PY{p}{:}\PY{p}{,}\PY{l+m+mi}{1}\PY{p}{:}\PY{n}{p}\PY{o}{+}\PY{l+m+mi}{1}\PY{p}{]}\PY{p}{,} \PY{n}{rowvar} \PY{o}{=} \PY{l+m+mi}{0}\PY{p}{)} \PY{c+c1}{\PYZsh{} 相关系数矩阵}
+\PY{n}{w}\PY{p}{,} \PY{n}{v} \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{linalg}\PY{o}{.}\PY{n}{eig}\PY{p}{(}\PY{n}{corr}\PY{p}{)} \PY{c+c1}{\PYZsh{} 特征值 \PYZam{} 特征向量}
+
+\PY{n}{kappa} \PY{o}{=} \PY{p}{[}\PY{p}{]}
+\PY{k}{for} \PY{n}{i} \PY{o+ow}{in} \PY{n+nb}{range}\PY{p}{(}\PY{n}{p}\PY{p}{)}\PY{p}{:}
+    \PY{n}{kappa}\PY{o}{.}\PY{n}{append}\PY{p}{(}\PY{n}{np}\PY{o}{.}\PY{n}{sqrt}\PY{p}{(}\PY{n+nb}{max}\PY{p}{(}\PY{n}{w}\PY{p}{)} \PY{o}{/} \PY{n}{w}\PY{p}{[}\PY{n}{i}\PY{p}{]}\PY{p}{)}\PY{p}{)}
+    \PY{n+nb}{print}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{特征值}\PY{l+s+si}{\PYZpc{}d}\PY{l+s+s1}{: }\PY{l+s+si}{\PYZpc{}.4f}\PY{l+s+s1}{, kappa}\PY{l+s+si}{\PYZpc{}d}\PY{l+s+s1}{: }\PY{l+s+si}{\PYZpc{}.4f}\PY{l+s+s1}{\PYZsq{}} \PY{o}{\PYZpc{}}\PY{p}{(}\PY{n}{i} \PY{o}{+} \PY{l+m+mi}{1}\PY{p}{,} \PY{n}{w}\PY{p}{[}\PY{n}{i}\PY{p}{]}\PY{p}{,} \PY{n}{i} \PY{o}{+} \PY{l+m+mi}{1}\PY{p}{,} \PY{n}{kappa}\PY{p}{[}\PY{n}{i}\PY{p}{]}\PY{p}{)}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+特征值1: 4.2142, kappa1: 1.0000
+特征值2: 1.7062, kappa2: 1.5716
+特征值3: 1.1450, kappa3: 1.9185
+特征值4: 0.7997, kappa4: 2.2955
+特征值5: 0.4616, kappa5: 3.0216
+特征值6: 0.0426, kappa6: 9.9503
+特征值7: 0.2805, kappa7: 3.8760
+特征值8: 0.1610, kappa8: 5.1156
+特征值9: 0.1892, kappa9: 4.7198
+    \end{Verbatim}
+
+    \begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\setcounter{enumi}{1}
+\tightlist
+\item
+  通过 \(\kappa_p\)
+  的大小判断自变量之间是否存在多重共线性以及多重共线性的严重程度.\\
+  记 \(\kappa=\lambda_{max}/ \lambda_{min}\)，从实际应用的角度,一般若
+  \(\kappa<100\)，则认为多重共线性的程度很小，若是
+  \(100<=\kappa<=1000\)，则认为存在一般程度上的多重共线性，若是
+  \(\kappa>1000\)，则就认为存在严重的多重共线性.\\
+  \(\kappa >= c_{\kappa}\)时，自变量之间存在多重共线性，\(c_{\kappa}\)常见取值为10，100，1000.
+\end{enumerate}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{11}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{thres\PYZus{}kappa} \PY{o}{=} \PY{l+m+mi}{10}
+\PY{k}{if} \PY{n}{np}\PY{o}{.}\PY{n}{max}\PY{p}{(}\PY{n}{kappa}\PY{p}{)} \PY{o}{\PYZgt{}}\PY{o}{=} \PY{n}{thres\PYZus{}kappa}\PY{p}{:}
+    \PY{n+nb}{print}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{设计矩阵 X 存在多重共线性，其中kappa值为：}\PY{l+s+si}{\PYZpc{}.4f}\PY{l+s+s1}{\PYZsq{}} \PY{o}{\PYZpc{}} \PY{n}{np}\PY{o}{.}\PY{n}{max}\PY{p}{(}\PY{n}{kappa}\PY{p}{)}\PY{p}{)}
+\PY{k}{else}\PY{p}{:}
+    \PY{n+nb}{print}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{设计矩阵 X 不存在多重共线性，其中kappa值为：}\PY{l+s+si}{\PYZpc{}.4f}\PY{l+s+s1}{\PYZsq{}} \PY{o}{\PYZpc{}} \PY{n}{np}\PY{o}{.}\PY{n}{max}\PY{p}{(}\PY{n}{kappa}\PY{p}{)}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+设计矩阵 X 不存在多重共线性，其中kappa值为：9.9503
+    \end{Verbatim}
+
+    由上述结果可以看出，虽然直观上看特征值6接近0，但是根据kappa值判断的结果并没有超过预设的上限。结合其他两种方法，可以大致判断，设计矩阵存在一定多重共线性，但是程度并不高。
+
+    \textbf{Q2：}\\
+消除多重共线性： 1. 剔除不重要的解释变量 2. 增大样本量
+
+    \textbf{方法1：剔除不重要的解释变量}
+
+在剔除时，我们可以以方差扩大因子为标准，去掉容易导致高共线性的自变量。也可以采用上一节中讲过的自变量选择的方法来选择合适的自变量，下面使用了后退法来选择自变量。
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{12}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{c+c1}{\PYZsh{} 利用VIF删除导致高共线性的变量}
+\PY{n}{col} \PY{o}{=} \PY{n+nb}{list}\PY{p}{(}\PY{n+nb}{range}\PY{p}{(}\PY{n}{X\PYZus{}std}\PY{o}{.}\PY{n}{shape}\PY{p}{[}\PY{l+m+mi}{1}\PY{p}{]}\PY{p}{)}\PY{p}{)}
+\PY{n}{dropped} \PY{o}{=} \PY{k+kc}{True}
+\PY{k}{while} \PY{n}{dropped}\PY{p}{:}
+    \PY{n}{dropped} \PY{o}{=} \PY{k+kc}{False}
+    \PY{n}{vif\PYZus{}drop} \PY{o}{=} \PY{p}{[}\PY{n}{variance\PYZus{}inflation\PYZus{}factor}\PY{p}{(}\PY{n}{X\PYZus{}std}\PY{p}{[}\PY{p}{:}\PY{p}{,}\PY{n}{col}\PY{p}{]}\PY{p}{,} \PY{n}{i}\PY{p}{)} \PY{k}{for} \PY{n}{i} \PY{o+ow}{in} \PY{n+nb}{range}\PY{p}{(}\PY{n}{X\PYZus{}std}\PY{p}{[}\PY{p}{:}\PY{p}{,}\PY{n}{col}\PY{p}{]}\PY{o}{.}\PY{n}{shape}\PY{p}{[}\PY{l+m+mi}{1}\PY{p}{]}\PY{p}{)}\PY{p}{]}
+    \PY{n}{maxvif} \PY{o}{=} \PY{n+nb}{max}\PY{p}{(}\PY{n}{vif\PYZus{}drop}\PY{p}{)}
+    \PY{n}{maxix} \PY{o}{=} \PY{n}{vif\PYZus{}drop}\PY{o}{.}\PY{n}{index}\PY{p}{(}\PY{n}{maxvif}\PY{p}{)}
+    \PY{k}{if} \PY{n}{maxvif} \PY{o}{\PYZgt{}} \PY{n}{thres\PYZus{}vif}\PY{p}{:}
+        \PY{k}{del} \PY{n}{col}\PY{p}{[}\PY{n}{maxix}\PY{p}{]}
+        \PY{n}{dropped} \PY{o}{=} \PY{k+kc}{True}
+    
+    \PY{k}{if} \PY{n}{dropped}\PY{p}{:}
+        \PY{n+nb}{print}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{剔除剩余变量中第 }\PY{l+s+si}{\PYZpc{}d}\PY{l+s+s1}{ 列变量：}\PY{l+s+s1}{\PYZsq{}} \PY{o}{\PYZpc{}} \PY{n}{maxix}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{剩余变量：}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{col}\PY{p}{)}
+        
+        \PY{c+c1}{\PYZsh{} 利用 AIC、BIC 准则做变量选择的一个参考}
+        \PY{n}{X\PYZus{}std\PYZus{}vif} \PY{o}{=} \PY{n}{X\PYZus{}std}\PY{p}{[}\PY{p}{:}\PY{p}{,} \PY{n}{col}\PY{p}{]}
+        \PY{n}{model\PYZus{}vif} \PY{o}{=} \PY{n}{sm}\PY{o}{.}\PY{n}{OLS}\PY{p}{(}\PY{n}{Y}\PY{p}{,} \PY{n}{X\PYZus{}std\PYZus{}vif}\PY{p}{)}\PY{o}{.}\PY{n}{fit}\PY{p}{(}\PY{p}{)}
+        \PY{n+nb}{print}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{此时模型的AIC值为：}\PY{l+s+si}{\PYZpc{}.4f}\PY{l+s+s1}{\PYZsq{}}\PY{o}{\PYZpc{}} \PY{n}{model\PYZus{}vif}\PY{o}{.}\PY{n}{aic}\PY{p}{)}
+ 
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+剔除剩余变量中第 6 列变量： 剩余变量： [0, 1, 2, 3, 4, 5, 7, 8, 9]
+此时模型的AIC值为：125.5623
+    \end{Verbatim}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{13}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{c+c1}{\PYZsh{} Do the multiple linear regression}
+\PY{n}{X\PYZus{}std\PYZus{}vif} \PY{o}{=} \PY{n}{X\PYZus{}std}\PY{p}{[}\PY{p}{:}\PY{p}{,} \PY{n}{col}\PY{p}{]}
+\PY{n}{model\PYZus{}vif} \PY{o}{=} \PY{n}{sm}\PY{o}{.}\PY{n}{OLS}\PY{p}{(}\PY{n}{Y}\PY{p}{,} \PY{n}{X\PYZus{}std\PYZus{}vif}\PY{p}{)}\PY{o}{.}\PY{n}{fit}\PY{p}{(}\PY{p}{)}
+\PY{n}{model\PYZus{}vif}\PY{o}{.}\PY{n}{summary}\PY{p}{(}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+            \begin{tcolorbox}[breakable, size=fbox, boxrule=.5pt, pad at break*=1mm, opacityfill=0]
+\prompt{Out}{outcolor}{13}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+<class 'statsmodels.iolib.summary.Summary'>
+"""
+                            OLS Regression Results
+==============================================================================
+Dep. Variable:                      y   R-squared:                       0.851
+Model:                            OLS   Adj. R-squared:                  0.771
+Method:                 Least Squares   F-statistic:                     10.68
+Date:                Thu, 15 Apr 2021   Prob (F-statistic):           5.94e-05
+Time:                        22:31:19   Log-Likelihood:                -53.781
+No. Observations:                  24   AIC:                             125.6
+Df Residuals:                      15   BIC:                             136.2
+Df Model:                           8
+Covariance Type:            nonrobust
+==============================================================================
+                 coef    std err          t      P>|t|      [0.025      0.975]
+------------------------------------------------------------------------------
+const         34.6292      0.587     58.955      0.000      33.377      35.881
+x1            13.7810      6.254      2.204      0.044       0.451      27.111
+x2             8.2433      4.634      1.779      0.096      -1.635      18.121
+x3             1.3870      4.493      0.309      0.762      -8.189      10.963
+x4             3.6215      5.630      0.643      0.530      -8.378      15.621
+x5             5.9877      3.882      1.543      0.144      -2.286      14.262
+x6            -5.1787      4.857     -1.066      0.303     -15.531       5.174
+x7            -2.5804      4.383     -0.589      0.565     -11.923       6.762
+x8             3.1554      3.520      0.896      0.384      -4.347      10.658
+==============================================================================
+Omnibus:                        1.705   Durbin-Watson:                   1.835
+Prob(Omnibus):                  0.426   Jarque-Bera (JB):                1.110
+Skew:                           0.217   Prob(JB):                        0.574
+Kurtosis:                       2.039   Cond. No.                         12.5
+==============================================================================
+
+Notes:
+[1] Standard Errors assume that the covariance matrix of the errors is correctly
+specified.
+"""
+\end{Verbatim}
+\end{tcolorbox}
+        
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{14}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{c+c1}{\PYZsh{} 后退法}
+\PY{n}{col0} \PY{o}{=} \PY{n+nb}{list}\PY{p}{(}\PY{n+nb}{range}\PY{p}{(}\PY{n}{X\PYZus{}std}\PY{o}{.}\PY{n}{shape}\PY{p}{[}\PY{l+m+mi}{1}\PY{p}{]}\PY{p}{)}\PY{p}{)}
+\PY{n}{col1} \PY{o}{=} \PY{n}{col0} \PY{o}{*} \PY{l+m+mi}{1}
+\PY{n}{dropped1} \PY{o}{=} \PY{k+kc}{True}
+\PY{n}{aic\PYZus{}model} \PY{o}{=} \PY{n}{sm}\PY{o}{.}\PY{n}{OLS}\PY{p}{(}\PY{n}{Y}\PY{p}{,} \PY{n}{X\PYZus{}std}\PY{p}{)}\PY{o}{.}\PY{n}{fit}\PY{p}{(}\PY{p}{)}\PY{o}{.}\PY{n}{aic}
+\PY{k}{while} \PY{n}{dropped1}\PY{p}{:}
+    \PY{n}{X\PYZus{}std\PYZus{}aic} \PY{o}{=} \PY{n}{X\PYZus{}std}\PY{p}{[}\PY{p}{:}\PY{p}{,} \PY{n}{col1}\PY{p}{]}
+    \PY{n}{model\PYZus{}aic} \PY{o}{=} \PY{n}{sm}\PY{o}{.}\PY{n}{OLS}\PY{p}{(}\PY{n}{Y}\PY{p}{,} \PY{n}{X\PYZus{}std\PYZus{}aic}\PY{p}{)}\PY{o}{.}\PY{n}{fit}\PY{p}{(}\PY{p}{)}\PY{o}{.}\PY{n}{aic}
+    \PY{n}{aic} \PY{o}{=} \PY{p}{[}\PY{p}{]}
+    \PY{k}{for} \PY{n}{i} \PY{o+ow}{in} \PY{n+nb}{range}\PY{p}{(}\PY{n+nb}{len}\PY{p}{(}\PY{n}{col1}\PY{p}{)}\PY{p}{)}\PY{p}{:}
+        \PY{n}{col2} \PY{o}{=} \PY{n}{col1} \PY{o}{*} \PY{l+m+mi}{1}
+        \PY{k}{del} \PY{n}{col2}\PY{p}{[}\PY{n}{i}\PY{p}{]}
+        \PY{n}{aic}\PY{o}{.}\PY{n}{append}\PY{p}{(}\PY{n}{sm}\PY{o}{.}\PY{n}{OLS}\PY{p}{(}\PY{n}{Y}\PY{p}{,} \PY{n}{X\PYZus{}std}\PY{p}{[}\PY{p}{:}\PY{p}{,} \PY{n}{col2}\PY{p}{]}\PY{p}{)}\PY{o}{.}\PY{n}{fit}\PY{p}{(}\PY{p}{)}\PY{o}{.}\PY{n}{aic}\PY{p}{)}
+    \PY{n}{minaic} \PY{o}{=} \PY{n+nb}{min}\PY{p}{(}\PY{n}{aic}\PY{p}{[}\PY{l+m+mi}{1}\PY{p}{:}\PY{n+nb}{len}\PY{p}{(}\PY{n}{aic}\PY{p}{)}\PY{p}{]}\PY{p}{)}
+    \PY{n}{minaic\PYZus{}rank} \PY{o}{=} \PY{n}{aic}\PY{o}{.}\PY{n}{index}\PY{p}{(}\PY{n}{minaic}\PY{p}{)}
+    \PY{n}{minaic\PYZus{}ix} \PY{o}{=} \PY{n}{col1}\PY{p}{[}\PY{n}{minaic\PYZus{}rank}\PY{p}{]}
+    \PY{k}{if} \PY{n}{minaic} \PY{o}{\PYZlt{}} \PY{n}{model\PYZus{}aic}\PY{p}{:}
+        \PY{k}{del} \PY{n}{col1}\PY{p}{[}\PY{n}{minaic\PYZus{}rank}\PY{p}{]}
+    \PY{k}{else}\PY{p}{:}
+        \PY{n}{dropped1} \PY{o}{=} \PY{k+kc}{False}
+    \PY{k}{if} \PY{n}{dropped1}\PY{p}{:}
+        \PY{n+nb}{print}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{剔除剩余变量中第 }\PY{l+s+si}{\PYZpc{}d}\PY{l+s+s1}{ 列变量：}\PY{l+s+s1}{\PYZsq{}} \PY{o}{\PYZpc{}} \PY{n}{minaic\PYZus{}ix}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{剩余变量：}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{col1}\PY{p}{)}
+        \PY{n+nb}{print}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{此时模型的AIC值为：}\PY{l+s+si}{\PYZpc{}.4f}\PY{l+s+s1}{\PYZsq{}}\PY{o}{\PYZpc{}} \PY{n}{minaic}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+剔除剩余变量中第 6 列变量： 剩余变量： [0, 1, 2, 3, 4, 5, 7, 8, 9]
+此时模型的AIC值为：125.5623
+剔除剩余变量中第 3 列变量： 剩余变量： [0, 1, 2, 4, 5, 7, 8, 9]
+此时模型的AIC值为：123.7143
+剔除剩余变量中第 8 列变量： 剩余变量： [0, 1, 2, 4, 5, 7, 9]
+此时模型的AIC值为：122.3525
+剔除剩余变量中第 4 列变量： 剩余变量： [0, 1, 2, 5, 7, 9]
+此时模型的AIC值为：121.2717
+剔除剩余变量中第 9 列变量： 剩余变量： [0, 1, 2, 5, 7]
+此时模型的AIC值为：120.3662
+    \end{Verbatim}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{15}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{c+c1}{\PYZsh{} Do the multiple linear regression}
+\PY{n}{X\PYZus{}std\PYZus{}aic} \PY{o}{=} \PY{n}{X\PYZus{}std}\PY{p}{[}\PY{p}{:}\PY{p}{,} \PY{n}{col1}\PY{p}{]}
+\PY{n}{model\PYZus{}aic} \PY{o}{=} \PY{n}{sm}\PY{o}{.}\PY{n}{OLS}\PY{p}{(}\PY{n}{Y}\PY{p}{,} \PY{n}{X\PYZus{}std\PYZus{}aic}\PY{p}{)}\PY{o}{.}\PY{n}{fit}\PY{p}{(}\PY{p}{)}
+\PY{n}{model\PYZus{}aic}\PY{o}{.}\PY{n}{summary}\PY{p}{(}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+            \begin{tcolorbox}[breakable, size=fbox, boxrule=.5pt, pad at break*=1mm, opacityfill=0]
+\prompt{Out}{outcolor}{15}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+<class 'statsmodels.iolib.summary.Summary'>
+"""
+                            OLS Regression Results
+==============================================================================
+Dep. Variable:                      y   R-squared:                       0.832
+Model:                            OLS   Adj. R-squared:                  0.797
+Method:                 Least Squares   F-statistic:                     23.54
+Date:                Thu, 15 Apr 2021   Prob (F-statistic):           3.87e-07
+Time:                        22:31:21   Log-Likelihood:                -55.183
+No. Observations:                  24   AIC:                             120.4
+Df Residuals:                      19   BIC:                             126.3
+Df Model:                           4
+Covariance Type:            nonrobust
+==============================================================================
+                 coef    std err          t      P>|t|      [0.025      0.975]
+------------------------------------------------------------------------------
+const         34.6292      0.553     62.587      0.000      33.471      35.787
+x1            18.3019      3.964      4.617      0.000      10.005      26.599
+x2             9.7675      3.845      2.540      0.020       1.719      17.816
+x3             5.9737      3.547      1.684      0.109      -1.451      13.398
+x4            -5.9995      3.493     -1.717      0.102     -13.311       1.312
+==============================================================================
+Omnibus:                        2.014   Durbin-Watson:                   2.005
+Prob(Omnibus):                  0.365   Jarque-Bera (JB):                1.096
+Skew:                          -0.083   Prob(JB):                        0.578
+Kurtosis:                       1.966   Cond. No.                         9.94
+==============================================================================
+
+Notes:
+[1] Standard Errors assume that the covariance matrix of the errors is correctly
+specified.
+"""
+\end{Verbatim}
+\end{tcolorbox}
+        
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{16}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{c+c1}{\PYZsh{} 方差扩大因子法}
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{方差扩大因子：}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+\PY{n}{vif\PYZus{}aic} \PY{o}{=} \PY{p}{[}\PY{n}{variance\PYZus{}inflation\PYZus{}factor}\PY{p}{(}\PY{n}{X\PYZus{}std\PYZus{}aic}\PY{p}{,} \PY{n}{i}\PY{p}{)} \PY{k}{for} \PY{n}{i} \PY{o+ow}{in} \PY{n+nb}{range}\PY{p}{(}\PY{n}{X\PYZus{}std\PYZus{}aic}\PY{o}{.}\PY{n}{shape}\PY{p}{[}\PY{l+m+mi}{1}\PY{p}{]}\PY{p}{)}\PY{p}{]}
+\PY{k}{for} \PY{n}{i} \PY{o+ow}{in} \PY{n+nb}{range}\PY{p}{(}\PY{n}{X\PYZus{}std\PYZus{}aic}\PY{o}{.}\PY{n}{shape}\PY{p}{[}\PY{l+m+mi}{1}\PY{p}{]} \PY{o}{\PYZhy{}} \PY{l+m+mi}{1}\PY{p}{)}\PY{p}{:}
+    \PY{n+nb}{print}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+si}{\PYZpc{}.4f}\PY{l+s+s1}{\PYZsq{}} \PY{o}{\PYZpc{}} \PY{n}{vif\PYZus{}aic}\PY{p}{[}\PY{n}{i} \PY{o}{+} \PY{l+m+mi}{1}\PY{p}{]}\PY{p}{)}
+
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+se}{\PYZbs{}n}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+\PY{k}{for} \PY{n}{i} \PY{o+ow}{in} \PY{n+nb}{range}\PY{p}{(}\PY{n}{X\PYZus{}std\PYZus{}aic}\PY{o}{.}\PY{n}{shape}\PY{p}{[}\PY{l+m+mi}{1}\PY{p}{]} \PY{o}{\PYZhy{}} \PY{l+m+mi}{1}\PY{p}{)}\PY{p}{:}
+    \PY{k}{if} \PY{n}{vif\PYZus{}drop}\PY{p}{[}\PY{n}{i}\PY{p}{]} \PY{o}{\PYZgt{}}\PY{o}{=} \PY{n}{thres\PYZus{}vif}\PY{p}{:}
+        \PY{n+nb}{print}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{自变量 x}\PY{l+s+si}{\PYZpc{}d}\PY{l+s+s1}{ 与其余自变量之间存在多重共线性，其中VIF值为: }\PY{l+s+si}{\PYZpc{}.4f}\PY{l+s+s1}{\PYZsq{}} \PY{o}{\PYZpc{}} \PY{p}{(}\PY{n}{i} \PY{o}{+} \PY{l+m+mi}{1}\PY{p}{,} \PY{n}{vif\PYZus{}drop}\PY{p}{[}\PY{n}{i} \PY{o}{+} \PY{l+m+mi}{1}\PY{p}{]}\PY{p}{)}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+方差扩大因子：
+2.1389
+2.0124
+1.7127
+1.6611
+
+
+    \end{Verbatim}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{17}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{c+c1}{\PYZsh{} 特征值判定法}
+\PY{n}{corr\PYZus{}} \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{corrcoef}\PY{p}{(}\PY{n}{X\PYZus{}std\PYZus{}aic}\PY{p}{[}\PY{p}{:}\PY{p}{,}\PY{l+m+mi}{1}\PY{p}{:}\PY{n}{p}\PY{o}{+}\PY{l+m+mi}{1}\PY{p}{]}\PY{p}{,} \PY{n}{rowvar} \PY{o}{=} \PY{l+m+mi}{0}\PY{p}{)} \PY{c+c1}{\PYZsh{} 相关系数矩阵}
+\PY{n}{w\PYZus{}}\PY{p}{,} \PY{n}{v\PYZus{}} \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{linalg}\PY{o}{.}\PY{n}{eig}\PY{p}{(}\PY{n}{corr\PYZus{}}\PY{p}{)} \PY{c+c1}{\PYZsh{} 特征值 \PYZam{} 特征向量}
+
+\PY{n}{kappa\PYZus{}} \PY{o}{=} \PY{p}{[}\PY{p}{]}
+\PY{k}{for} \PY{n}{i} \PY{o+ow}{in} \PY{n+nb}{range}\PY{p}{(}\PY{n}{X\PYZus{}std\PYZus{}aic}\PY{o}{.}\PY{n}{shape}\PY{p}{[}\PY{l+m+mi}{1}\PY{p}{]} \PY{o}{\PYZhy{}} \PY{l+m+mi}{1}\PY{p}{)}\PY{p}{:}
+    \PY{n}{kappa\PYZus{}}\PY{o}{.}\PY{n}{append}\PY{p}{(}\PY{n}{np}\PY{o}{.}\PY{n}{sqrt}\PY{p}{(}\PY{n}{w\PYZus{}}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{]} \PY{o}{/} \PY{n}{w\PYZus{}}\PY{p}{[}\PY{n}{i}\PY{p}{]}\PY{p}{)}\PY{p}{)}
+    \PY{n+nb}{print}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{特征值}\PY{l+s+si}{\PYZpc{}d}\PY{l+s+s1}{: }\PY{l+s+si}{\PYZpc{}.4f}\PY{l+s+s1}{, kappa}\PY{l+s+si}{\PYZpc{}d}\PY{l+s+s1}{: }\PY{l+s+si}{\PYZpc{}.4f}\PY{l+s+s1}{\PYZsq{}} \PY{o}{\PYZpc{}}\PY{p}{(}\PY{n}{i} \PY{o}{+} \PY{l+m+mi}{1}\PY{p}{,} \PY{n}{w\PYZus{}}\PY{p}{[}\PY{n}{i}\PY{p}{]}\PY{p}{,} \PY{n}{i} \PY{o}{+} \PY{l+m+mi}{1}\PY{p}{,} \PY{n}{kappa\PYZus{}}\PY{p}{[}\PY{n}{i}\PY{p}{]}\PY{p}{)}\PY{p}{)}
+    
+\PY{k}{if} \PY{n+nb}{max}\PY{p}{(}\PY{n}{kappa\PYZus{}}\PY{p}{)} \PY{o}{\PYZgt{}}\PY{o}{=} \PY{n}{thres\PYZus{}kappa}\PY{p}{:}
+    \PY{n+nb}{print}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+se}{\PYZbs{}n}\PY{l+s+s1}{设计矩阵 X 存在多重共线性，其中 kappa 值为: }\PY{l+s+si}{\PYZpc{}.4f}\PY{l+s+s1}{\PYZsq{}} \PY{o}{\PYZpc{}} \PY{n+nb}{max}\PY{p}{(}\PY{n}{kappa\PYZus{}}\PY{p}{)}\PY{p}{)}
+\PY{k}{else}\PY{p}{:}
+    \PY{n+nb}{print}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+se}{\PYZbs{}n}\PY{l+s+s1}{设计矩阵 X 不存在多重共线性，其中 kappa 值为: }\PY{l+s+si}{\PYZpc{}.4f}\PY{l+s+s1}{\PYZsq{}} \PY{o}{\PYZpc{}} \PY{n+nb}{max}\PY{p}{(}\PY{n}{kappa\PYZus{}}\PY{p}{)}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+特征值1: 2.3389, kappa1: 1.0000
+特征值2: 0.8724, kappa2: 1.6374
+特征值3: 0.2427, kappa3: 3.1041
+特征值4: 0.5460, kappa4: 2.0697
+
+设计矩阵 X 不存在多重共线性，其中 kappa 值为: 3.1041
+    \end{Verbatim}
+
+    综上，剔除原始数据的第 3、4、6、8 和 9
+个变量后，方差扩大因子和kappa值都有一定程度的减小，可以一定程度上消除变量间的多重共线性。
+
+    \textbf{方法2：增大样本量}\\
+这里不用增大样本量，原因有二：\\
+其一，这个数据集中数据量是充足的，而且不是因为样本量过少而导致的多重共线性问题，更多是因为这个变量之间的相关性很强造成的；\\
+其二，增加变量的方法，只是在于采集数据时，如果样本量过小可能会产生多重共线性的问题，因此需要采集足够多的样本。在实际分析阶段，往往无法增加样本量。
+
+
+    % Add a bibliography block to the postdoc
+    
+    
+    
+\end{document}
